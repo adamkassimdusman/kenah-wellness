@@ -108,6 +108,22 @@ export interface AssessmentSubmission {
   status: 'new' | 'contacted' | 'scheduled' | 'completed' | 'archived';
 }
 
+export interface UploadRequirement {
+  id: string;
+  label: string;
+  required: boolean;
+  description?: string;
+}
+
+export interface UploadedFile {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  category: string;
+  dataUrl?: string; // Base64 data URL for document preview/download
+}
+
 export interface JobPosting {
   id: string;
   title: string;
@@ -120,6 +136,7 @@ export interface JobPosting {
   benefits: string[];
   postedDate: string;
   status: 'active' | 'closed';
+  requiredUploads?: UploadRequirement[];
 }
 
 export interface JobApplication {
@@ -137,4 +154,5 @@ export interface JobApplication {
   hasClearances: boolean;
   submittedAt: string;
   status: 'new' | 'reviewing' | 'interview_scheduled' | 'hired' | 'declined';
+  uploadedDocuments?: UploadedFile[];
 }

@@ -24,6 +24,12 @@ export const INITIAL_JOB_POSTINGS: JobPosting[] = [
       'Mileage reimbursement for community transport',
       'Health, dental, and vision insurance options for full-time staff'
     ],
+    requiredUploads: [
+      { id: 'cv', label: 'Resume / Curriculum Vitae (CV)', required: true, description: 'Your current work history and healthcare or direct support background.' },
+      { id: 'license', label: "Driver's License / Photo ID", required: true, description: 'Valid Pennsylvania Driver’s License for community transport verification.' },
+      { id: 'cpr', label: 'CPR & First Aid Certification', required: false, description: 'Current AHA or Red Cross card (if available, or complete company-paid course).' },
+      { id: 'clearances', label: 'PA Background Clearances', required: false, description: 'State Police, Child Abuse, or FBI fingerprint report if completed within 12 months.' }
+    ],
     postedDate: 'May 10, 2026',
     status: 'active'
   },
@@ -48,6 +54,12 @@ export const INITIAL_JOB_POSTINGS: JobPosting[] = [
       'Warm supportive clinical team with 24/7 supervisor support',
       'Referral bonuses for bringing fellow caregivers'
     ],
+    requiredUploads: [
+      { id: 'cv', label: 'Resume / CV', required: true, description: 'Highlighting senior care, CNA/HHA experience, or personal caregiving history.' },
+      { id: 'license', label: "Driver's License & Auto Insurance", required: true, description: 'For local travel between clients in Allegheny County.' },
+      { id: 'certs', label: 'CNA / HHA Certification', required: false, description: 'Pennsylvania Nurse Aide registry or HHA certification certificate.' },
+      { id: 'cpr', label: 'CPR & First Aid Card', required: false, description: 'Current certification copy.' }
+    ],
     postedDate: 'May 20, 2026',
     status: 'active'
   },
@@ -71,6 +83,11 @@ export const INITIAL_JOB_POSTINGS: JobPosting[] = [
       'Consistent client assignments for relationship building',
       'Competitive pay differential for specialized memory cases'
     ],
+    requiredUploads: [
+      { id: 'cv', label: 'Resume / CV', required: true, description: 'Documenting your Alzheimer’s, dementia, or memory care experience.' },
+      { id: 'dementia_cert', label: 'Memory / Dementia Care Credentials', required: false, description: 'Certificates in CDP, CARES, or specialized dementia training.' },
+      { id: 'license', label: "Driver's License / Photo ID", required: true, description: 'Valid government ID.' }
+    ],
     postedDate: 'June 01, 2026',
     status: 'active'
   },
@@ -93,6 +110,11 @@ export const INITIAL_JOB_POSTINGS: JobPosting[] = [
       'Flexible weekend and evening hours—great for students and healthcare aides',
       'Supportive mentorship and ongoing professional growth',
       'Rewarding environment making a direct difference for local families'
+    ],
+    requiredUploads: [
+      { id: 'cv', label: 'Resume or Bio Summary', required: true, description: 'Summary of care experience and community involvement.' },
+      { id: 'license', label: "Driver's License", required: true, description: 'Proof of PA driver’s license.' },
+      { id: 'clearances', label: 'Background Clearances', required: false, description: 'PA State Police / Child Abuse / FBI clearances.' }
     ],
     postedDate: 'June 15, 2026',
     status: 'active'

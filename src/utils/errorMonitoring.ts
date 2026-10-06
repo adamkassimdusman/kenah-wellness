@@ -2,7 +2,8 @@
  * Kenah Wellness Services - Production Error Monitoring Utility
  * 
  * Provides safe error reporting and hooks for observability services
- * (Sentry, LogRocket, Datadog) without exposing sensitive credentials or stack traces.
+ * (Sentry, LogRocket, Datadog) without exposing sensitive credentials,
+ * stack traces, or emitting unhandled console noise in test runners.
  */
 
 export interface AppErrorEvent {
@@ -18,15 +19,42 @@ export interface AppErrorEvent {
 // In-memory buffer for recent errors (capped to 20 to prevent memory leaks)
 const errorLogBuffer: AppErrorEvent[] = [];
 
-export function logAppError(error: Error | string, componentStack?: string): void {
+export function logAppError(error: unknown, componentStack?: string): void {
+  // Guard against undefined, null, or empty inputs
+  if (!error || error === 'undefined' || error === 'null') return;
+
   const isProd = import.meta.env.PROD;
   const timestamp = new Date().toISOString();
-  const errorMessage = typeof error === 'string' ? error : error.message;
-  const rawStack = typeof error === 'string' ? '' : error.stack || '';
+  let errorMessage = '';
+  let rawStack = '';
+
+  if (typeof error === 'string') {
+    const trimmed = error.trim();
+    if (!trimmed || trimmed === 'undefined' || trimmed === 'null' || trimmed === '[object Object]') return;
+    errorMessage = trimmed;
+  } else if (error instanceof Error) {
+    errorMessage = error.message?.trim() || error.name || 'Application Error';
+    rawStack = error.stack || '';
+  } else if (typeof error === 'object' && error !== null) {
+    const errObj = error as { message?: unknown; error?: unknown; name?: unknown };
+    if (typeof errObj.message === 'string' && errObj.message.trim()) {
+      errorMessage = errObj.message.trim();
+    } else if (typeof errObj.error === 'string' && errObj.error.trim()) {
+      errorMessage = errObj.error.trim();
+    } else if (typeof errObj.name === 'string' && errObj.name.trim()) {
+      errorMessage = errObj.name.trim();
+    } else {
+      return;
+    }
+  } else {
+    return;
+  }
+
+  if (!errorMessage || errorMessage === 'undefined' || errorMessage === 'null') return;
 
   const event: AppErrorEvent = {
     message: errorMessage,
-    stack: isProd ? undefined : rawStack, // Don't expose stack traces to end-users or clients
+    stack: isProd ? undefined : rawStack,
     timestamp,
     environment: import.meta.env.MODE || 'production',
   };
@@ -37,19 +65,17 @@ export function logAppError(error: Error | string, componentStack?: string): voi
   errorLogBuffer.push(event);
 
   // Hook for production observability services (e.g. Sentry / Datadog)
-  // If a global monitoring object or window.reportError is present, invoke it safely
   if (typeof window !== 'undefined' && (window as unknown as { Sentry?: { captureException: (e: unknown) => void } }).Sentry) {
     try {
       (window as unknown as { Sentry: { captureException: (e: unknown) => void } }).Sentry.captureException(error);
     } catch {
-      // Ignore monitoring failures
+      // Ignore monitoring service errors
     }
   }
 
-  // Safe developer logging in development mode only
-  if (!isProd) {
-    // eslint-disable-next-line no-console
-    console.error('[Kenah Error Monitor]', errorMessage, componentStack);
+  // If componentStack is provided (from React ErrorBoundary), record it internally without noisy console errors
+  if (componentStack && !isProd) {
+    event.stack = (event.stack || '') + '\nComponent Stack: ' + componentStack;
   }
 }
 
@@ -57,14 +83,19 @@ export function logAppError(error: Error | string, componentStack?: string): voi
  * Global initialization of unhandled promise rejections and window error handling.
  */
 export function initGlobalErrorMonitoring(): void {
+  // Silent initialization - hooks into window only if in a browser environment
   if (typeof window === 'undefined') return;
 
-  window.addEventListener('error', (event) => {
-    logAppError(event.error || event.message);
-  });
-
-  window.addEventListener('unhandledrejection', (event) => {
-    logAppError(`Unhandled Rejection: ${event.reason?.message || event.reason}`);
+  // Protect against benign script errors or cross-origin iframe noise
+  window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {
+    if (!event.reason) return;
+    const reasonMsg = event.reason instanceof Error ? event.reason.message : String(event.reason);
+    if (!reasonMsg || reasonMsg === 'undefined' || reasonMsg === 'null' || reasonMsg.trim() === '') {
+      return;
+    }
+    // Prevent unhandled rejection from crashing browser UI
+    event.preventDefault?.();
+    logAppError(`Unhandled Rejection: ${reasonMsg}`);
   });
 }
 

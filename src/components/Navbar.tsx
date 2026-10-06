@@ -88,31 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Navigation Links & Free Assessment CTA */}
           <div className="hidden lg:flex items-center gap-4 xl:gap-5 text-sm font-medium text-slate-700">
-            <nav className="flex items-center gap-4 xl:gap-5">
-              <button
-                onClick={() => handleNavClick('faq')}
-                className={`hover:text-[#0B2B26] transition-colors cursor-pointer ${
-                  currentPage === 'faq' ? 'text-[#0B2B26] font-bold' : ''
-                }`}
-              >
-                FAQs
-              </button>
-              <button
-                onClick={() => handleNavClick('testimonials')}
-                className={`hover:text-[#0B2B26] transition-colors cursor-pointer ${
-                  currentPage === 'testimonials' ? 'text-[#0B2B26] font-bold' : ''
-                }`}
-              >
-                Testimonials
-              </button>
-              <button
-                onClick={() => handleNavClick('careers')}
-                className={`hover:text-[#0B2B26] transition-colors cursor-pointer ${
-                  currentPage === 'careers' ? 'text-[#0B2B26] font-bold' : ''
-                }`}
-              >
-                Careers
-              </button>
+            <nav className="flex items-center gap-5 xl:gap-7">
               <button
                 onClick={() => handleNavClick('blog')}
                 className={`hover:text-[#0B2B26] transition-colors cursor-pointer flex items-center gap-1 ${
@@ -195,24 +171,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               ODP Waiver Services
             </button>
-            <button
-              onClick={() => handleNavClick('faq')}
-              className={`text-left py-2 ${currentPage === 'faq' ? 'text-[#0B2B26] font-bold' : 'text-slate-700'}`}
-            >
-              FAQs & Guidance
-            </button>
-            <button
-              onClick={() => handleNavClick('testimonials')}
-              className={`text-left py-2 ${currentPage === 'testimonials' ? 'text-[#0B2B26] font-bold' : 'text-slate-700'}`}
-            >
-              Testimonials & Stories
-            </button>
-            <button
-              onClick={() => handleNavClick('careers')}
-              className={`text-left py-2 ${currentPage === 'careers' ? 'text-[#0B2B26] font-bold' : 'text-slate-700'}`}
-            >
-              Careers & Job Openings
-            </button>
+
             <button
               onClick={() => handleNavClick('blog')}
               className={`text-left py-2 ${currentPage === 'blog' ? 'text-[#0B2B26] font-bold' : 'text-slate-700'}`}

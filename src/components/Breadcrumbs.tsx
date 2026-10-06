@@ -3,7 +3,7 @@ import { ChevronRight, Home } from 'lucide-react';
 import { PageId } from '../types';
 
 interface BreadcrumbsProps {
-  items: { label: string; page?: PageId }[];
+  items: { label: string; page?: PageId; onClick?: () => void }[];
   onNavigate: (page: PageId) => void;
 }
 
@@ -26,7 +26,14 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, onNavigate }) =
             <React.Fragment key={index}>
               <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
               <li>
-                {item.page && !isLast ? (
+                {!isLast && item.onClick ? (
+                  <button
+                    onClick={item.onClick}
+                    className="hover:text-slate-900 transition-colors cursor-pointer"
+                  >
+                    {item.label}
+                  </button>
+                ) : !isLast && item.page ? (
                   <button
                     onClick={() => onNavigate(item.page!)}
                     className="hover:text-slate-900 transition-colors cursor-pointer"

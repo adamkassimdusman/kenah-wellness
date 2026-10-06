@@ -30,9 +30,13 @@ import {
   Mail,
   Phone,
   AlertCircle,
-  Filter
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  FileCheck2
 } from 'lucide-react';
-import { PageId, BlogPost, ServiceItem, AssessmentSubmission, JobPosting, JobApplication } from '../types';
+import { PageId, BlogPost, ServiceItem, AssessmentSubmission, JobPosting, JobApplication, UploadRequirement } from '../types';
 import {
   getStoredBlogs,
   saveStoredBlogs,
@@ -90,9 +94,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentSubmission | null>(null);
   const [assessmentFilter, setAssessmentFilter] = useState<string>('all');
 
+  // Sidebar Layout State (Left Collapsible)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+
   // Job Management State
   const [isJobModalOpen, setIsJobModalOpen] = useState<boolean>(false);
   const [editingJobId, setEditingJobId] = useState<string | null>(null);
+  const [customUploadDocName, setCustomUploadDocName] = useState<string>('');
   const [jobForm, setJobForm] = useState<{
     title: string;
     department: string;
@@ -103,6 +111,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
     requirements: string;
     benefits: string;
     status: 'active' | 'closed';
+    requiredUploads: UploadRequirement[];
   }>({
     title: '',
     department: 'Home Care Services',
@@ -112,7 +121,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({
     description: '',
     requirements: 'Valid PA Driver’s License\nBackground clearances\nCPR certification',
     benefits: 'Weekly direct deposit\nFlexible scheduling\nPaid training',
-    status: 'active'
+    status: 'active',
+    requiredUploads: [
+      { id: 'cv', label: 'Resume / CV', required: true, description: 'Work history and background' },
+      { id: 'license', label: "Driver's License / Photo ID", required: true, description: 'Valid driver’s license' },
+      { id: 'cpr', label: 'CPR & First Aid Certificate', required: false, description: 'Current certification' },
+      { id: 'clearances', label: 'PA Background Clearances', required: false, description: 'State police & child abuse reports' }
+    ]
   });
 
   // Application Management State
@@ -256,8 +271,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       description: '',
       requirements: 'Valid PA Driver’s License\nClean background clearances\nCPR & First Aid certification',
       benefits: 'Competitive weekly pay\nFlexible scheduling\nPaid clinical training',
-      status: 'active'
+      status: 'active',
+      requiredUploads: [
+        { id: 'cv', label: 'Resume / CV', required: true, description: 'Work history and background' },
+        { id: 'license', label: "Driver's License / Photo ID", required: true, description: 'Valid driver’s license' },
+        { id: 'cpr', label: 'CPR & First Aid Certificate', required: false, description: 'Current certification' },
+        { id: 'clearances', label: 'PA Background Clearances', required: false, description: 'State police & child abuse reports' }
+      ]
     });
+    setCustomUploadDocName('');
     setIsJobModalOpen(true);
   };
 
@@ -272,8 +294,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       description: job.description,
       requirements: job.requirements.join('\n'),
       benefits: job.benefits.join('\n'),
-      status: job.status
+      status: job.status,
+      requiredUploads: job.requiredUploads || [
+        { id: 'cv', label: 'Resume / CV', required: true, description: 'Work history and background' },
+        { id: 'license', label: "Driver's License / Photo ID", required: true, description: 'Valid driver’s license' }
+      ]
     });
+    setCustomUploadDocName('');
     setIsJobModalOpen(true);
   };
 
@@ -306,7 +333,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({
         requirements: reqs,
         benefits: bens,
         postedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        status: jobForm.status
+        status: jobForm.status,
+        requiredUploads: jobForm.requiredUploads
       };
       updateStoredJob(updatedJob);
       setJobs(getStoredJobs());
@@ -323,7 +351,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({
         requirements: reqs,
         benefits: bens,
         postedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        status: jobForm.status
+        status: jobForm.status,
+        requiredUploads: jobForm.requiredUploads
       };
       addStoredJob(newJob);
       setJobs(getStoredJobs());
@@ -722,7 +751,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   // AUTHENTICATED MANAGEMENT DASHBOARD VIEW
   // ==========================================
   return (
-    <div className="bg-[#FAF8F5] min-h-screen text-left font-sans pb-24">
+    <div className="bg-[#FAF8F5] min-h-screen text-left font-sans flex flex-col md:flex-row">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#0B2B26] text-white px-5 py-3 rounded-2xl shadow-xl border border-white/20 text-xs sm:text-sm font-semibold flex items-center gap-2.5 animate-fadeIn">
@@ -731,143 +760,198 @@ export const AdminPage: React.FC<AdminPageProps> = ({
         </div>
       )}
 
-      {/* Top Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#0B2B26] text-white flex items-center justify-center font-bold">
-              KW
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-[#0B2B26] font-display">
-                  Kenah Management Portal
-                </h1>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                  Authorized
-                </span>
+      {/* Left Collapsible Navigation Sidebar */}
+      <aside
+        className={`bg-[#0B2B26] text-white flex flex-col justify-between transition-all duration-300 ease-in-out shrink-0 z-40 sticky top-0 md:h-screen ${
+          isSidebarCollapsed ? 'w-full md:w-20' : 'w-full md:w-64 lg:w-72'
+        }`}
+      >
+        <div>
+          {/* Brand & Collapse Toggle */}
+          <div className="p-4 sm:p-5 border-b border-white/10 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center font-bold text-sm shrink-0 border border-white/10 shadow-xs">
+                KW
               </div>
-              <p className="text-xs text-slate-500">
-                Manage live blogs, cover photos, home care services & ODP waiver programs.
-              </p>
+              {!isSidebarCollapsed && (
+                <div className="min-w-0">
+                  <h2 className="text-sm font-bold font-display text-white truncate">
+                    Kenah Portal
+                  </h2>
+                  <span className="text-[10px] text-emerald-400 font-semibold block">
+                    Administrative Core
+                  </span>
+                </div>
+              )}
             </div>
-          </div>
 
-          <div className="flex items-center gap-3 self-end sm:self-auto">
+            {/* Collapse toggle button for Desktop */}
             <button
-              onClick={() => onNavigate('home')}
-              className="px-4 py-2 rounded-full border border-slate-300 hover:border-slate-800 text-xs font-semibold text-slate-700 transition-colors flex items-center gap-1.5 cursor-pointer"
+              type="button"
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              className="hidden md:flex p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white transition-colors cursor-pointer"
+              title={isSidebarCollapsed ? 'Expand Navigation' : 'Collapse Navigation'}
             >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>View Live Website</span>
-            </button>
-
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 rounded-full bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Log Out</span>
+              {isSidebarCollapsed ? (
+                <ChevronRight className="w-4 h-4 text-[#E89A24]" />
+              ) : (
+                <ChevronLeft className="w-4 h-4 text-slate-400 hover:text-white" />
+              )}
             </button>
           </div>
+
+          {/* Navigation Links */}
+          <nav className="p-3 space-y-1.5">
+            {/* Assessments Tab */}
+            <button
+              onClick={() => setActiveTab('assessments')}
+              className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'assessments'
+                  ? 'bg-[#E89A24] text-white shadow-md'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+              title="Care Assessments Intake"
+            >
+              <Calendar className="w-4 h-4 shrink-0" />
+              {!isSidebarCollapsed && (
+                <span className="flex-1 text-left truncate">Care Assessments</span>
+              )}
+              {assessments.filter((a) => a.status === 'new').length > 0 && (
+                <span
+                  className={`rounded-full font-extrabold text-[10px] ${
+                    isSidebarCollapsed
+                      ? 'w-2 h-2 bg-emerald-400'
+                      : 'px-1.5 py-0.5 bg-emerald-400 text-[#0B2B26]'
+                  }`}
+                >
+                  {!isSidebarCollapsed && assessments.filter((a) => a.status === 'new').length}
+                </span>
+              )}
+            </button>
+
+            {/* Job Postings Tab */}
+            <button
+              onClick={() => setActiveTab('jobs')}
+              className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'jobs'
+                  ? 'bg-[#E89A24] text-white shadow-md'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+              title="Careers & Job Postings"
+            >
+              <Briefcase className="w-4 h-4 shrink-0" />
+              {!isSidebarCollapsed && (
+                <span className="flex-1 text-left truncate">Job Postings</span>
+              )}
+              {!isSidebarCollapsed && (
+                <span className="text-[11px] text-white/60">({jobs.length})</span>
+              )}
+            </button>
+
+            {/* Applications Tab */}
+            <button
+              onClick={() => setActiveTab('applications')}
+              className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'applications'
+                  ? 'bg-[#E89A24] text-white shadow-md'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+              title="Job Applications Dossiers"
+            >
+              <User className="w-4 h-4 shrink-0" />
+              {!isSidebarCollapsed && (
+                <span className="flex-1 text-left truncate">Applications</span>
+              )}
+              {jobApplications.filter((a) => a.status === 'new').length > 0 && (
+                <span
+                  className={`rounded-full font-extrabold text-[10px] ${
+                    isSidebarCollapsed
+                      ? 'w-2 h-2 bg-emerald-400'
+                      : 'px-1.5 py-0.5 bg-emerald-400 text-[#0B2B26]'
+                  }`}
+                >
+                  {!isSidebarCollapsed && jobApplications.filter((a) => a.status === 'new').length}
+                </span>
+              )}
+            </button>
+
+            {/* Blogs Tab */}
+            <button
+              onClick={() => setActiveTab('blogs')}
+              className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'blogs'
+                  ? 'bg-[#E89A24] text-white shadow-md'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+              title="Care Blogs & Insights"
+            >
+              <BookOpen className="w-4 h-4 shrink-0" />
+              {!isSidebarCollapsed && (
+                <span className="flex-1 text-left truncate">Care Articles</span>
+              )}
+              {!isSidebarCollapsed && (
+                <span className="text-[11px] text-white/60">({blogs.length})</span>
+              )}
+            </button>
+
+            {/* Home Care Tab */}
+            <button
+              onClick={() => setActiveTab('home-care')}
+              className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'home-care'
+                  ? 'bg-[#E89A24] text-white shadow-md'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+              title="Home Care Directory"
+            >
+              <Heart className="w-4 h-4 shrink-0" />
+              {!isSidebarCollapsed && (
+                <span className="flex-1 text-left truncate">Home Care</span>
+              )}
+            </button>
+
+            {/* ODP Waivers Tab */}
+            <button
+              onClick={() => setActiveTab('odp')}
+              className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'odp'
+                  ? 'bg-[#E89A24] text-white shadow-md'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+              title="ODP Waiver Services"
+            >
+              <ShieldCheck className="w-4 h-4 shrink-0" />
+              {!isSidebarCollapsed && (
+                <span className="flex-1 text-left truncate">ODP Waivers</span>
+              )}
+            </button>
+          </nav>
         </div>
-      </header>
 
-      {/* Tab Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="bg-white rounded-2xl p-2 shadow-xs border border-slate-200/80 flex flex-wrap gap-2">
-          {/* Care Assessments Tab */}
+        {/* Sidebar Footer Actions */}
+        <div className="p-3 border-t border-white/10 space-y-1">
           <button
-            onClick={() => setActiveTab('assessments')}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
-              activeTab === 'assessments'
-                ? 'bg-[#0B2B26] text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
+            onClick={() => onNavigate('home')}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+            title="View Live Website"
           >
-            <Calendar className="w-4 h-4 text-[#E89A24]" />
-            <span>Care Assessments ({assessments.length})</span>
-            {assessments.filter((a) => a.status === 'new').length > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full bg-[#E89A24] text-white text-[10px] font-bold">
-                {assessments.filter((a) => a.status === 'new').length} new
-              </span>
-            )}
+            <ExternalLink className="w-4 h-4 shrink-0" />
+            {!isSidebarCollapsed && <span>Live Website</span>}
           </button>
 
-          {/* Job Postings Tab */}
           <button
-            onClick={() => setActiveTab('jobs')}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
-              activeTab === 'jobs'
-                ? 'bg-[#0B2B26] text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-300 hover:bg-rose-500/20 hover:text-rose-200 transition-colors cursor-pointer"
+            title="Sign Out"
           >
-            <Briefcase className="w-4 h-4 text-[#E89A24]" />
-            <span>Job Postings ({jobs.length})</span>
-          </button>
-
-          {/* Job Applications Tab */}
-          <button
-            onClick={() => setActiveTab('applications')}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
-              activeTab === 'applications'
-                ? 'bg-[#0B2B26] text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            <User className="w-4 h-4 text-[#E89A24]" />
-            <span>Applications ({jobApplications.length})</span>
-            {jobApplications.filter((a) => a.status === 'new').length > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold">
-                {jobApplications.filter((a) => a.status === 'new').length} new
-              </span>
-            )}
-          </button>
-
-          {/* Blogs Tab */}
-          <button
-            onClick={() => setActiveTab('blogs')}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
-              activeTab === 'blogs'
-                ? 'bg-[#0B2B26] text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            <BookOpen className="w-4 h-4" />
-            <span>Blog Articles ({blogs.length})</span>
-          </button>
-
-          {/* Home Care Services Tab */}
-          <button
-            onClick={() => setActiveTab('home-care')}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
-              activeTab === 'home-care'
-                ? 'bg-[#0B2B26] text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            <Heart className="w-4 h-4" />
-            <span>Home Care ({homeCareServices.length})</span>
-          </button>
-
-          {/* ODP Waiver Tab */}
-          <button
-            onClick={() => setActiveTab('odp')}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
-              activeTab === 'odp'
-                ? 'bg-[#0B2B26] text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            <ShieldCheck className="w-4 h-4" />
-            <span>ODP Waivers ({odpServices.length})</span>
+            <LogOut className="w-4 h-4 shrink-0" />
+            {!isSidebarCollapsed && <span>Sign Out</span>}
           </button>
         </div>
-      </div>
+      </aside>
 
-      {/* Main Tab Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      {/* Main Content Workspace */}
+      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto">
         {/* =========================================================
             TAB: CARE ASSESSMENTS INTAKE (Received from Free Assessment)
            ========================================================= */}
@@ -2441,6 +2525,101 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 />
               </div>
 
+              {/* Document Uploads Configuration for Applicants */}
+              <div className="space-y-3 pt-3 border-t border-slate-200">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Required Document Uploads for Applicants
+                  </label>
+                  <p className="text-xs text-slate-500">
+                    Configure which credentials or certificates applicants must upload when applying for this role.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  {jobForm.requiredUploads.map((uploadReq, idx) => (
+                    <div
+                      key={uploadReq.id}
+                      className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between gap-3 text-xs"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <FileCheck2 className="w-4 h-4 text-[#E89A24] shrink-0" />
+                        <div>
+                          <span className="font-bold text-slate-800">{uploadReq.label}</span>
+                          {uploadReq.description && (
+                            <span className="text-[11px] text-slate-400 block">
+                              {uploadReq.description}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = jobForm.requiredUploads.map((u, i) =>
+                              i === idx ? { ...u, required: !u.required } : u
+                            );
+                            setJobForm({ ...jobForm, requiredUploads: updated });
+                          }}
+                          className={`px-2.5 py-1 rounded-full text-[10px] font-bold cursor-pointer transition-colors ${
+                            uploadReq.required
+                              ? 'bg-rose-100 text-rose-800 border border-rose-200'
+                              : 'bg-slate-200 text-slate-600'
+                          }`}
+                        >
+                          {uploadReq.required ? 'Mandatory' : 'Optional'}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = jobForm.requiredUploads.filter((_, i) => i !== idx);
+                            setJobForm({ ...jobForm, requiredUploads: updated });
+                          }}
+                          className="text-slate-400 hover:text-rose-600 p-1 cursor-pointer"
+                          title="Remove requirement"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add Custom Upload Requirement input */}
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    type="text"
+                    value={customUploadDocName}
+                    onChange={(e) => setCustomUploadDocName(e.target.value)}
+                    placeholder="e.g. CNA Registry Card, TB Screening, CPR Certificate..."
+                    className="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!customUploadDocName.trim()) return;
+                      const newReq: UploadRequirement = {
+                        id: `custom-${Date.now()}`,
+                        label: customUploadDocName.trim(),
+                        required: true,
+                        description: 'Mandatory applicant certificate'
+                      };
+                      setJobForm({
+                        ...jobForm,
+                        requiredUploads: [...jobForm.requiredUploads, newReq]
+                      });
+                      setCustomUploadDocName('');
+                    }}
+                    className="px-4 py-2 bg-[#0B2B26] hover:bg-[#071E1A] text-white text-xs font-bold rounded-xl cursor-pointer"
+                  >
+                    + Add Upload Requirement
+                  </button>
+                </div>
+              </div>
+
               <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
                 <button
                   type="button"
@@ -2536,6 +2715,63 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 <div className="p-4 bg-[#FAF4EE] border border-[#EADBCC] rounded-2xl text-slate-800 text-xs leading-relaxed whitespace-pre-wrap">
                   {selectedApplication.resumeOrBio}
                 </div>
+              </div>
+
+              {/* Uploaded Certificates & Credentials Section */}
+              <div className="space-y-2 pt-2 border-t border-slate-100">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-700 text-xs font-bold uppercase tracking-wider block">
+                    Uploaded Documents & Certificates ({selectedApplication.uploadedDocuments?.length || 0})
+                  </span>
+                  {selectedApplication.uploadedDocuments && selectedApplication.uploadedDocuments.length > 0 && (
+                    <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      Files Attached
+                    </span>
+                  )}
+                </div>
+
+                {selectedApplication.uploadedDocuments && selectedApplication.uploadedDocuments.length > 0 ? (
+                  <div className="space-y-2">
+                    {selectedApplication.uploadedDocuments.map((doc, idx) => (
+                      <div
+                        key={doc.id || idx}
+                        className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between gap-3 shadow-2xs"
+                      >
+                        <div className="flex items-center gap-2.5 overflow-hidden">
+                          <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                            <FileCheck2 className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-slate-800 truncate">
+                              {doc.name}
+                            </div>
+                            <div className="text-[10px] text-slate-400">
+                              {doc.category} · {(doc.size / 1024).toFixed(1)} KB
+                            </div>
+                          </div>
+                        </div>
+
+                        {doc.dataUrl ? (
+                          <a
+                            href={doc.dataUrl}
+                            download={doc.name}
+                            className="px-3 py-1.5 rounded-lg bg-[#0B2B26] hover:bg-[#071E1A] text-white text-[11px] font-bold flex items-center gap-1.5 shrink-0 transition-colors"
+                            title={`Download ${doc.name}`}
+                          >
+                            <Download className="w-3.5 h-3.5 text-[#E89A24]" />
+                            <span>Download / View</span>
+                          </a>
+                        ) : (
+                          <span className="text-[10px] text-slate-400">Attached</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-3 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs text-center">
+                    No certificate files uploaded with this submission.
+                  </div>
+                )}
               </div>
 
               <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
