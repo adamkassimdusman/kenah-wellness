@@ -1,0 +1,6 @@
+{
+  "name": "Kenah Wellness Services",
+  "description": "Quality Home Care and Pennsylvania ODP Waiver Services supporting individuals with intellectual and developmental disabilities and seniors across Western PA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

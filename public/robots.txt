@@ -1,0 +1,10 @@
+# Robots.txt for Kenah Wellness Services LLC
+# https://kenahwellness.com
+
+User-agent: *
+Allow: /
+Disallow: /admin
+
+# Sitemap
+Host: https://kenahwellness.com
+Sitemap: https://kenahwellness.com/sitemap.xml

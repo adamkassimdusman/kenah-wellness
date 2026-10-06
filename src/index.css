@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Outfit", sans-serif;
+  
+  /* Palette exact from Home.svg Figma design */
+  --color-brand-dark: #0B2B26;
+  --color-brand-dark-hover: #071E1A;
+  --color-brand-sand: #F8EDE2;
+  --color-brand-sand-light: #FAF4EE;
+  --color-brand-mint: #E6F7F4;
+  --color-brand-mint-accent: #4EBAA8;
+  --color-brand-rose: #FDEEF1;
+  --color-brand-rose-accent: #F28FA5;
+  --color-brand-gold: #E89A24;
+  --color-brand-yellow: #F2D701;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: #111827;
+  background-color: #FFFFFF;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F8EDE2;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8CFC4;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B8ADA0;
+}

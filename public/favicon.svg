@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="16" fill="#0B2B26"/>
+  <circle cx="32" cy="32" r="24" stroke="#E89A24" stroke-width="2.5" stroke-dasharray="2 3"/>
+  <g transform="translate(32, 32)">
+    <!-- Brand Petals -->
+    <ellipse cx="0" cy="-13" rx="4.5" ry="9" fill="#3CB9A8" opacity="0.95"/>
+    <ellipse cx="9.2" cy="-9.2" rx="4.5" ry="9" fill="#E89A24" transform="rotate(45 9.2 -9.2)"/>
+    <ellipse cx="13" cy="0" rx="4.5" ry="9" fill="#F6A8B8" transform="rotate(90 13 0)"/>
+    <ellipse cx="9.2" cy="9.2" rx="4.5" ry="9" fill="#3CB9A8" transform="rotate(135 9.2 9.2)"/>
+    <ellipse cx="0" cy="13" rx="4.5" ry="9" fill="#E89A24" transform="rotate(180 0 13)"/>
+    <ellipse cx="-9.2" cy="9.2" rx="4.5" ry="9" fill="#F6A8B8" transform="rotate(225 -9.2 9.2)"/>
+    <ellipse cx="-13" cy="0" rx="4.5" ry="9" fill="#3CB9A8" transform="rotate(270 -13 0)"/>
+    <ellipse cx="-9.2" cy="-9.2" rx="4.5" ry="9" fill="#E89A24" transform="rotate(315 -9.2 -9.2)"/>
+    <!-- Center Core -->
+    <circle cx="0" cy="0" r="6" fill="#F2D701"/>
+    <circle cx="0" cy="0" r="3" fill="#0B2B26"/>
+  </g>
+</svg>
