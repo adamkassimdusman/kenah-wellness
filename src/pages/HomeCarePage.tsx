@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
 import { Breadcrumbs } from '../components/Breadcrumbs';
-import { Check, Calendar, ArrowRight, ShieldCheck, Heart, Clock, Phone, Sparkles } from 'lucide-react';
+import {
+  Check,
+  Calendar,
+  ArrowRight,
+  ShieldCheck,
+  Heart,
+  Clock,
+  Phone,
+  Sparkles,
+  CreditCard,
+  CheckCircle2,
+  Award
+} from 'lucide-react';
 import {
   PersonalCareLineIcon,
   SeniorCareLineIcon,
@@ -9,10 +21,17 @@ import {
   DementiaCareLineIcon,
   CompanionCareLineIcon,
   SpecializedSupportLineIcon,
-  AdditionalServicesLineIcon
+  AdditionalServicesLineIcon,
+  PostDischargeRecoveryLineIcon,
+  FacilityBasedCareLineIcon
 } from '../components/icons/ServiceLineIcons';
 import { PageId, ServiceItem } from '../types';
 import { getStoredHomeCareServices, DATA_CHANGE_EVENT } from '../utils/storage';
+import {
+  COMPANY_DETAILS,
+  PAYMENT_OPTIONS,
+  WHY_CHOOSE_US
+} from '../data/servicesData';
 
 interface HomeCarePageProps {
   onNavigate: (page: PageId) => void;
@@ -42,12 +61,16 @@ export const HomeCarePage: React.FC<HomeCarePageProps> = ({
         return <PersonalCareLineIcon size={48} className="w-12 h-12" />;
       case 'senior-care':
         return <SeniorCareLineIcon size={48} className="w-12 h-12" />;
+      case 'post-discharge-recovery-care':
+        return <PostDischargeRecoveryLineIcon size={48} className="w-12 h-12" />;
+      case 'dementia-care':
+        return <DementiaCareLineIcon size={48} className="w-12 h-12" />;
       case 'end-of-life-care':
         return <EndOfLifeCareLineIcon size={48} className="w-12 h-12" />;
       case 'respite-care':
         return <RespiteCareLineIcon size={48} className="w-12 h-12" />;
-      case 'dementia-care':
-        return <DementiaCareLineIcon size={48} className="w-12 h-12" />;
+      case 'facility-based-care':
+        return <FacilityBasedCareLineIcon size={48} className="w-12 h-12" />;
       case 'companionship-care':
         return <CompanionCareLineIcon size={48} className="w-12 h-12" />;
       case 'specialized-support':
@@ -63,19 +86,29 @@ export const HomeCarePage: React.FC<HomeCarePageProps> = ({
     <div className="space-y-16 pb-24 text-left font-sans">
       <Breadcrumbs items={[{ label: 'Home Care Services' }]} onNavigate={onNavigate} />
 
-      {/* Hero Header */}
+      {/* Hero Header with Corrected Title: Home Help for Seniors Across Western PA */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="rounded-[36px] sm:rounded-[44px] bg-[#F8EDE2] p-8 sm:p-14 border border-[#EADBCC] relative overflow-hidden">
           <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white text-[#0B2B26] text-xs font-bold uppercase tracking-wider border border-[#0B2B26]/10">
-              <Sparkles className="w-3.5 h-3.5 text-[#E89A24]" />
-              <span>Licensed Pennsylvania Home Care Agency</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-3 py-1 rounded-full bg-white text-[#0B2B26] text-xs font-bold uppercase tracking-wider border border-[#0B2B26]/10">
+                <Sparkles className="w-3.5 h-3.5 text-[#E89A24] inline mr-1" />
+                Licensed PA Home Care Agency
+              </span>
+              <span className="px-3 py-1 rounded-full bg-[#0B2B26] text-white text-xs font-bold uppercase tracking-wider">
+                ODP Provider #104556630
+              </span>
+              <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-semibold">
+                Serving Allegheny, Butler & Washington Counties
+              </span>
             </div>
+
             <h1 className="text-3xl sm:text-5xl font-extrabold text-[#0B2B26] font-display tracking-tight text-balance leading-[1.12]">
-              Quality Home Care in Greater Pittsburgh & Western PA
+              Home Help for Seniors Across Western PA
             </h1>
+
             <p className="text-sm sm:text-base text-slate-700 leading-relaxed max-w-2xl pt-1">
-              Helping seniors and individuals remain in the place they love most—their own home. Our trained caregivers deliver personalized personal care, senior support, dementia care, and reliable household assistance with unmatched compassion and dignity.
+              Non-medical home care that helps people stay safe, comfortable and independent at home — available up to 24 hours a day, 7 days a week. From personal care and senior companionship to specialized dementia support, post-discharge hospital recovery, and assisted living facility care contracts.
             </p>
 
             <div className="pt-4 flex flex-wrap items-center gap-3.5">
@@ -88,18 +121,18 @@ export const HomeCarePage: React.FC<HomeCarePageProps> = ({
               </button>
 
               <a
-                href="tel:+14125461860"
+                href={`tel:${COMPANY_DETAILS.phoneClean}`}
                 className="px-6 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#0B2B26] border border-[#D8D2C9] font-medium text-sm sm:text-base transition-all cursor-pointer inline-flex items-center gap-2"
               >
                 <Phone className="w-4 h-4 text-[#E89A24]" />
-                <span>Call +1 (412) 546-1860</span>
+                <span>{COMPANY_DETAILS.phone}</span>
               </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Grid (All 8 exact Home Care Services) */}
+      {/* Services Grid (All Updated Home Care Specialties) */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 space-y-10">
         <div>
           <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block mb-2">
@@ -223,6 +256,92 @@ export const HomeCarePage: React.FC<HomeCarePageProps> = ({
           </div>
         </div>
       </section>
+
+      {/* PAYMENT OPTIONS WE ACCEPT (Section 6) */}
+      <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 space-y-8">
+        <div>
+          <span className="text-xs font-bold uppercase tracking-widest text-[#E89A24] block mb-1">
+            FUNDING & COVERAGE
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
+            Payment Options We Accept
+          </h2>
+          <p className="mt-2 text-sm text-slate-600 max-w-2xl">
+            We work with multiple programs so quality care remains accessible and affordable:
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {PAYMENT_OPTIONS.map((opt, i) => (
+            <div
+              key={i}
+              className="p-6 rounded-[28px] bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#E6F7F4] text-emerald-900 text-[10px] font-bold uppercase tracking-wider border border-emerald-200/60">
+                    {opt.badge}
+                  </span>
+                  <CreditCard className="w-4 h-4 text-slate-400" />
+                </div>
+                <h3 className="text-lg font-bold text-[#0B2B26] font-display">
+                  {opt.source}
+                </h3>
+                <p className="mt-2 text-xs text-slate-600 leading-relaxed">
+                  {opt.description}
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap gap-1.5">
+                {opt.programs.map((prog, pIdx) => (
+                  <span
+                    key={pIdx}
+                    className="px-2 py-0.5 rounded-md bg-slate-50 text-slate-600 text-[10px] font-medium"
+                  >
+                    {prog}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* WHY CHOOSE KENAH WELLNESS SERVICES? */}
+      <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <div className="rounded-[36px] bg-[#FAF4EE] border border-[#EADBCC] p-8 sm:p-12 space-y-8">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-widest text-[#E89A24] block mb-1">
+              BENCHMARK EXCELLENCE
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
+              Why Choose Kenah Wellness Services?
+            </h2>
+            <p className="mt-2 text-sm text-slate-600 max-w-2xl">
+              Trained caregivers, RN supervision, and person-centered attention you can depend on.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {WHY_CHOOSE_US.map((item, idx) => (
+              <div
+                key={idx}
+                className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-2"
+              >
+                <div className="flex items-center gap-2 text-[#E89A24]">
+                  <CheckCircle2 className="w-4 h-4 text-[#4EBAA8]" />
+                  <h3 className="font-bold text-sm sm:text-base text-[#0B2B26]">
+                    {item.title}
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed pl-6">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 };

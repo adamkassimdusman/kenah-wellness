@@ -138,10 +138,21 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate, onOpenAsse
                 <div>
                   <strong className="text-slate-900 block text-xs uppercase tracking-wider text-slate-400">Main Office:</strong>
                   <span className="text-sm text-slate-800 leading-relaxed block">
-                    2400 Ansys Drive Suite 169<br />
+                    2400 Ansys Drive, Suite 169<br />
                     Canonsburg, PA 15317<br />
                     United States
                   </span>
+                </div>
+                <div className="p-4 rounded-2xl bg-[#FAF4EE] border border-[#EADBCC] text-xs">
+                  <strong className="text-[#0B2B26] block font-bold text-sm mb-1">
+                    Referrals & Intake Coordination:
+                  </strong>
+                  <div className="text-slate-800 font-medium">
+                    Zephaniah Omweno, Operations Manager
+                  </div>
+                  <div className="text-slate-500 text-[11px] mt-0.5">
+                    Direct line for County Supports Coordinators (SCs), hospital discharge planners & families across Allegheny, Butler and Washington Counties.
+                  </div>
                 </div>
               </div>
 
@@ -305,13 +316,17 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate, onOpenAsse
                       className="w-full bg-transparent border-b border-slate-400/70 pb-2 text-sm text-[#0B2B26] focus:outline-hidden focus:border-[#0B2B26]"
                     >
                       <option value="Both / General Inquiry">Both Home Care & ODP Waiver</option>
-                      <option value="Home Care - Personal Care">Home Care: Personal Care</option>
-                      <option value="Home Care - Senior Care">Home Care: Senior & Elderly Care</option>
-                      <option value="Home Care - Companion Care">Home Care: Companion Care</option>
-                      <option value="ODP - In-Home Respite">PA ODP: In-Home Respite</option>
+                      <option value="ODP - In-Home & Community Supports (IHCS)">PA ODP: In-Home & Community Supports (IHCS)</option>
+                      <option value="ODP - In-Home, Life Sharing & Day Respite">PA ODP: In-Home, Life Sharing & Day Respite</option>
                       <option value="ODP - Out-of-Home Respite">PA ODP: Out-of-Home Respite</option>
-                      <option value="ODP - Habilitation (HAB)">PA ODP: Habilitation (HAB)</option>
                       <option value="ODP - Community Participation (CPS)">PA ODP: Community Participation (CPS)</option>
+                      <option value="ODP - Habilitation Services">PA ODP: Habilitation Services</option>
+                      <option value="Home Care - Personal Care">Home Care: Personal Care</option>
+                      <option value="Home Care - Senior Care & Companionship">Home Care: Senior Care & Companionship</option>
+                      <option value="Home Care - Post-Discharge / Recovery Care">Home Care: Post-Discharge / Recovery Care</option>
+                      <option value="Home Care - Dementia Care">Home Care: Dementia Care</option>
+                      <option value="Home Care - End-of-Life & Hospice">Home Care: End-of-Life & Hospice Support</option>
+                      <option value="Home Care - Facility-Based Care">Home Care: Facility-Based Care (Assisted Living)</option>
                     </select>
                   </div>
 

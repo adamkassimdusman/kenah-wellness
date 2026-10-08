@@ -5,9 +5,16 @@ import {
   CheckCircle2,
   Calendar,
   Building,
-  Home
+  Home,
+  Phone,
+  ArrowRight,
+  Sparkles,
+  CreditCard,
+  Award,
+  Users
 } from 'lucide-react';
 import {
+  InHomeCommunitySupportsLineIcon,
   InHomeRespiteLineIcon,
   OutOfHomeRespiteLineIcon,
   HabilitationLineIcon,
@@ -15,6 +22,11 @@ import {
 } from '../components/icons/ServiceLineIcons';
 import { PageId, ServiceItem } from '../types';
 import { getStoredOdpServices, DATA_CHANGE_EVENT } from '../utils/storage';
+import {
+  COMPANY_DETAILS,
+  PAYMENT_OPTIONS,
+  WHY_CHOOSE_US
+} from '../data/servicesData';
 
 interface OdpWaiverPageProps {
   onNavigate: (page: PageId) => void;
@@ -37,28 +49,57 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
     return () => window.removeEventListener(DATA_CHANGE_EVENT, handler);
   }, []);
 
+  const renderOdpIcon = (id: string) => {
+    switch (id) {
+      case 'in-home-community-supports-ihcs':
+        return <InHomeCommunitySupportsLineIcon size={48} className="w-12 h-12" />;
+      case 'in-home-respite':
+        return <InHomeRespiteLineIcon size={48} className="w-12 h-12" />;
+      case 'out-of-home-respite':
+        return <OutOfHomeRespiteLineIcon size={48} className="w-12 h-12" />;
+      case 'habilitation-hab':
+        return <HabilitationLineIcon size={48} className="w-12 h-12" />;
+      case 'community-participation-support-cps':
+        return <CommunityParticipationLineIcon size={48} className="w-12 h-12" />;
+      default:
+        return <InHomeCommunitySupportsLineIcon size={48} className="w-12 h-12" />;
+    }
+  };
+
   const inHomeService = odpList.find((s) => s.id === 'in-home-respite') || odpList[0];
   const outOfHomeService = odpList.find((s) => s.id === 'out-of-home-respite') || odpList[1] || odpList[0];
-  const habService = odpList.find((s) => s.id === 'habilitation-hab') || odpList[2] || odpList[0];
-  const cpsService = odpList.find((s) => s.id === 'community-participation-support-cps') || odpList[3] || odpList[0];
 
   return (
     <div className="space-y-16 pb-24 text-left font-sans">
       <Breadcrumbs items={[{ label: 'ODP Waiver Services' }]} onNavigate={onNavigate} />
 
-      {/* Hero Header */}
+      {/* Hero Header with Provider #104556630 and Counties */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="rounded-[36px] sm:rounded-[44px] bg-[#F8EDE2] p-8 sm:p-14 border border-[#EADBCC] relative overflow-hidden">
           <div className="max-w-3xl space-y-4">
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block">
-              PENNSYLVANIA ODP CONSOLIDATED WAIVER
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-3.5 py-1 rounded-full bg-[#0B2B26] text-white text-xs font-bold uppercase tracking-wider">
+                ODP Provider #104556630
+              </span>
+              <span className="px-3 py-1 rounded-full bg-white text-[#0B2B26] text-xs font-semibold border border-slate-200">
+                Allegheny · Butler · Washington Counties
+              </span>
+              <span className="px-3 py-1 rounded-full bg-[#E89A24] text-white text-xs font-bold">
+                Ready to Accept Referrals
+              </span>
+            </div>
+
             <h1 className="text-3xl sm:text-5xl font-extrabold text-[#0B2B26] font-display tracking-tight text-balance leading-[1.12]">
-              ODP Waiver Services
+              Pennsylvania ODP Waiver Services
             </h1>
+
             <p className="text-sm sm:text-base text-slate-700 leading-relaxed max-w-2xl pt-1">
-              Kenah Wellness Services provides supports through Pennsylvania's Office of Developmental Programs (ODP) under the Consolidated Waiver. Our services help individuals with intellectual and developmental disabilities achieve greater independence, community inclusion, and improved quality of life.
+              Kenah Wellness Services is an Office of Developmental Programs (ODP) approved provider (Provider #104556630). We work closely with Supports Coordinators, individuals and families to deliver person-centered In-Home & Community Supports (IHCS), Respite Services, Community Participation Support (CPS), and life-enriching Habilitation.
             </p>
+
+            <div className="text-xs sm:text-sm font-bold text-[#E89A24] tracking-wide pt-1">
+              Consolidated Waiver &nbsp;|&nbsp; Community Living Waiver &nbsp;|&nbsp; P/FDS Waiver
+            </div>
 
             <div className="pt-4 flex flex-wrap items-center gap-3.5">
               <button
@@ -75,28 +116,29 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
                 Verify Waiver Eligibility
               </button>
               <a
-                href="tel:+14125461860"
+                href={`tel:${COMPANY_DETAILS.phoneClean}`}
                 className="px-6 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#0B2B26] border border-[#D8D2C9] font-medium text-sm transition-all cursor-pointer inline-flex items-center gap-2"
               >
-                <span>+1 (412) 546-1860</span>
+                <Phone className="w-4 h-4 text-[#E89A24]" />
+                <span>{COMPANY_DETAILS.phone}</span>
               </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Clear Difference Comparison Callout */}
+      {/* Clear Difference Comparison Callout: In-Home vs. Out-of-Home Respite */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="rounded-[32px] bg-[#FAF4EE] border border-slate-200/90 p-8 sm:p-10">
           <div className="max-w-3xl mb-6">
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block mb-1">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#E89A24] block mb-1">
               RESPITE CLARIFICATION
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B2B26] font-display">
               The Difference Between In-Home and Out-of-Home Respite
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mt-1">
-              Pennsylvania’s ODP Consolidated Waiver distinguishes respite care by where services are delivered:
+              Short-term relief for families and unpaid caregivers with the same trained, dependable staff. Both options offer Levels 2–4 with 1:1, 1:2 and 2:1 staffing ratios, enhanced and non-enhanced options, and licensed (LPN/RN) & unlicensed respite:
             </p>
           </div>
 
@@ -106,18 +148,18 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
                 <InHomeRespiteLineIcon size={40} className="w-10 h-10 shrink-0" />
                 <div>
                   <h3 className="font-extrabold text-base sm:text-lg text-[#0B2B26]">
-                    In-Home Respite
+                    In-Home, Life Sharing & Day Respite
                   </h3>
                   <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full inline-block">
-                    In Individual's Home
+                    In Individual's Residence
                   </span>
                 </div>
               </div>
               <p className="text-xs sm:text-sm text-slate-700 font-medium">
-                <strong>Setting:</strong> Support occurs within the individual’s residence.
+                <strong>Setting:</strong> Support occurs within the individual’s own residence.
               </p>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Temporary support provided in the individual's home while caregivers attend to work, appointments, personal responsibilities, or rest while ensuring comfort and continuous care in familiar surroundings.
+                Short-term relief for families and unpaid caregivers while individuals remain in their comforting, familiar environment with trained, dependable staff adhering strictly to their ISP.
               </p>
               <div className="pt-2">
                 <button
@@ -134,7 +176,7 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
                 <OutOfHomeRespiteLineIcon size={40} className="w-10 h-10 shrink-0" />
                 <div>
                   <h3 className="font-extrabold text-base sm:text-lg text-[#0B2B26]">
-                    Out-of-Home Respite
+                    Out-of-Home Respite (NEW)
                   </h3>
                   <span className="text-[11px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full inline-block">
                     Licensed Approved Settings
@@ -142,10 +184,10 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
                 </div>
               </div>
               <p className="text-xs sm:text-sm text-slate-700 font-medium">
-                <strong>Setting:</strong> Support occurs in an approved setting outside the residence.
+                <strong>Setting:</strong> Support occurs in an approved setting outside the home.
               </p>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Temporary support provided in an approved setting outside the individual's residence while maintaining safety, care, and support, offering caregivers extended relief and giving individuals safe community social experiences.
+                When families need a break, or an individual benefits from time away from home, our Out-of-Home Respite provides safe, supervised care in a setting outside the family home. Individuals continue their routines with trained staff while families rest and recharge.
               </p>
               <div className="pt-2">
                 <button
@@ -160,262 +202,79 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
         </div>
       </section>
 
-      {/* Services Grid (4 Key Services) with Line-Art Icons */}
+      {/* Services Grid (All Authorized ODP Waiver Offerings) */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 space-y-10">
         <div>
           <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block mb-2">
-            AUTHORIZED ODP SERVICES
+            AUTHORIZED ODP SERVICES · PROVIDER #104556630
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
-            Our Pennsylvania ODP Waiver Offerings
+            Our Pennsylvania ODP Waiver Offerings ({odpList.length})
           </h2>
           <p className="mt-2 text-sm text-slate-600 max-w-2xl">
-            Administered in full compliance with Pennsylvania DHS Office of Developmental Programs standards and the Everyday Lives framework.
+            Administered in full compliance with Pennsylvania DHS Office of Developmental Programs standards, person-centered ISP outcomes, and the Everyday Lives framework.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          
-          {/* 1. In-Home Respite */}
-          <div className="rounded-[32px] bg-white border border-slate-200/90 p-8 sm:p-10 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-all hover:shadow-md">
-            <div>
-              <div className="mb-5">
-                <InHomeRespiteLineIcon size={48} className="w-12 h-12" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#0B2B26] font-display">
-                In-Home Respite
-              </h3>
-              <p className="mt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Temporary support provided in the individual's home while caregivers attend to work, appointments, personal responsibilities, or rest.
-              </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {odpList.map((service) => (
+            <div
+              key={service.id}
+              className="rounded-[32px] bg-white border border-slate-200/90 p-8 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-all hover:shadow-md group"
+            >
+              <div>
+                <div className="mb-5">
+                  {renderOdpIcon(service.id)}
+                </div>
 
-              <div className="mt-6 space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-                  Service Highlights:
-                </span>
-                <ul className="space-y-1.5 text-xs text-slate-700">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Support occurs within the individual's residence</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Primary caregiver relief for errands, rest, and work</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Preserves comforting, familiar home routines</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Authorized under PA ODP Consolidated Waiver</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
+                <div className="inline-block px-2.5 py-0.5 rounded-full bg-[#FAF4EE] text-amber-900 text-[10px] font-bold uppercase tracking-wider mb-2 border border-amber-200/60">
+                  ODP Waiver
+                </div>
 
-            <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
-              <span className="text-xs text-slate-400">Consolidated Waiver</span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => onSelectService(inHomeService)}
-                  className="px-4 py-2 rounded-full border border-slate-300 hover:border-slate-800 text-xs font-semibold text-[#0B2B26] transition-colors cursor-pointer"
-                >
-                  Open Full Page
-                </button>
-                {onOpenBooking && (
+                <h3 className="text-xl font-bold text-[#0B2B26] font-display group-hover:text-[#E89A24] transition-colors">
+                  {service.title}
+                </h3>
+                <p className="mt-2.5 text-xs text-slate-600 leading-relaxed line-clamp-3">
+                  {service.shortDesc}
+                </p>
+
+                <div className="mt-5 space-y-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                    Key Features:
+                  </span>
+                  <ul className="space-y-1.5 text-xs text-slate-700">
+                    {service.bulletPoints.slice(0, 3).map((pt, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                        <span className="truncate">{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+                <span className="text-[11px] text-slate-400">Provider #104556630</span>
+                <div className="flex items-center gap-2">
                   <button
-                    onClick={() => onOpenBooking('In-Home Respite Planning')}
-                    className="px-3.5 py-2 rounded-full bg-[#FAF4EE] hover:bg-[#F8EDE2] text-[#0B2B26] text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                    onClick={() => onSelectService(service)}
+                    className="px-4 py-2 rounded-full border border-slate-300 hover:border-slate-800 text-xs font-semibold text-[#0B2B26] transition-colors cursor-pointer"
                   >
-                    <Calendar className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Book</span>
+                    Open Full Page
                   </button>
-                )}
+                  {onOpenBooking && (
+                    <button
+                      onClick={() => onOpenBooking(service.title)}
+                      className="px-3.5 py-2 rounded-full bg-[#FAF4EE] hover:bg-[#F8EDE2] text-[#0B2B26] text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Calendar className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Book</span>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* 2. Out-of-Home Respite */}
-          <div className="rounded-[32px] bg-white border border-slate-200/90 p-8 sm:p-10 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-all hover:shadow-md">
-            <div>
-              <div className="mb-5">
-                <OutOfHomeRespiteLineIcon size={48} className="w-12 h-12" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#0B2B26] font-display">
-                Out-of-Home Respite
-              </h3>
-              <p className="mt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Temporary support provided in an approved setting outside the individual's residence while maintaining safety, care, and support.
-              </p>
-
-              <div className="mt-6 space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-                  Service Highlights:
-                </span>
-                <ul className="space-y-1.5 text-xs text-slate-700">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Support occurs in an approved setting outside residence</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Extended overnight or weekend caregiver relief</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Engaging social and recreational opportunities</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Safe, licensed, and state-approved facilities</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
-              <span className="text-xs text-slate-400">Approved Settings</span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => onSelectService(outOfHomeService)}
-                  className="px-4 py-2 rounded-full border border-slate-300 hover:border-slate-800 text-xs font-semibold text-[#0B2B26] transition-colors cursor-pointer"
-                >
-                  Open Full Page
-                </button>
-                {onOpenBooking && (
-                  <button
-                    onClick={() => onOpenBooking('Out-of-Home Respite Consultation')}
-                    className="px-3.5 py-2 rounded-full bg-[#FAF4EE] hover:bg-[#F8EDE2] text-[#0B2B26] text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Calendar className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Book</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* 3. Habilitation (HAB) */}
-          <div className="rounded-[32px] bg-white border border-slate-200/90 p-8 sm:p-10 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-all hover:shadow-md">
-            <div>
-              <div className="mb-5">
-                <HabilitationLineIcon size={48} className="w-12 h-12" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#0B2B26] font-display">
-                Habilitation (HAB)
-              </h3>
-              <p className="mt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Services focused on developing, improving, and maintaining skills that support independence, self-care, communication, and community participation.
-              </p>
-
-              <div className="mt-6 space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-                  Skill Development Areas:
-                </span>
-                <ul className="space-y-1.5 text-xs text-slate-700">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Daily living skills (cooking, cleaning, self-care)</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Communication and self-advocacy coaching</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Money management & functional budgeting</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Community transit and mobility practice</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
-              <span className="text-xs text-slate-400">Everyday Lives Goals</span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => onSelectService(habService)}
-                  className="px-4 py-2 rounded-full border border-slate-300 hover:border-slate-800 text-xs font-semibold text-[#0B2B26] transition-colors cursor-pointer"
-                >
-                  Open Full Page
-                </button>
-                {onOpenBooking && (
-                  <button
-                    onClick={() => onOpenBooking('Habilitation (HAB) Exploration')}
-                    className="px-3.5 py-2 rounded-full bg-[#FAF4EE] hover:bg-[#F8EDE2] text-[#0B2B26] text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Calendar className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Book</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* 4. Community Participation Support (CPS) */}
-          <div className="rounded-[32px] bg-white border border-slate-200/90 p-8 sm:p-10 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-all hover:shadow-md">
-            <div>
-              <div className="mb-5">
-                <CommunityParticipationLineIcon size={48} className="w-12 h-12" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#0B2B26] font-display">
-                Community Participation Support (CPS)
-              </h3>
-              <p className="mt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Services that facilitate community involvement, vocational exploration, volunteer work, socialization, and active citizenship.
-              </p>
-
-              <div className="mt-6 space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-                  Inclusion Focus Areas:
-                </span>
-                <ul className="space-y-1.5 text-xs text-slate-700">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Civic engagement & volunteer opportunities</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Pre-vocational & job exploration activities</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Community recreational & cultural outings</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                    <span>Meaningful peer relationships & active citizenship</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
-              <span className="text-xs text-slate-400">Active Community Inclusion</span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => onSelectService(cpsService)}
-                  className="px-4 py-2 rounded-full border border-slate-300 hover:border-slate-800 text-xs font-semibold text-[#0B2B26] transition-colors cursor-pointer"
-                >
-                  Open Full Page
-                </button>
-                {onOpenBooking && (
-                  <button
-                    onClick={() => onOpenBooking('Community Participation Support')}
-                    className="px-3.5 py-2 rounded-full bg-[#FAF4EE] hover:bg-[#F8EDE2] text-[#0B2B26] text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Calendar className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Book</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
+          ))}
         </div>
       </section>
 
@@ -443,7 +302,7 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
                 County MH/ID Contact
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Reach out to your County Mental Health / Intellectual Disabilities (MH/ID) office (e.g. Allegheny County DHS) to register.
+                Reach out to your County Mental Health / Intellectual Disabilities (MH/ID) office in Allegheny, Butler, or Washington County to register.
               </p>
             </div>
 
@@ -479,7 +338,7 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
                 Select Kenah Wellness
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Choose Kenah Wellness Services as your authorized provider for Respite, HAB, or CPS supports in your ISP.
+                Choose Kenah Wellness Services (Provider #104556630) as your authorized provider for IHCS, Respite, HAB, or CPS supports.
               </p>
             </div>
           </div>
@@ -509,22 +368,30 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
         </div>
       </section>
 
-      {/* CTA Box */}
+      {/* Referrals Coordinator Box with Zephaniah Omweno */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="rounded-[32px] bg-[#0B2B26] text-white p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="max-w-xl">
+        <div className="rounded-[32px] bg-[#0B2B26] text-white p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-lg">
+          <div className="max-w-xl space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#F2D701]">
+              SUPPORTS COORDINATORS & FAMILIES
+            </span>
             <h3 className="text-2xl sm:text-3xl font-bold font-display">
-              Ready to Explore ODP Supports?
+              Ready to Accept ODP Referrals
             </h3>
-            <p className="text-xs sm:text-sm text-slate-300 mt-1">
-              Contact our Allegheny and Washington County intake team to discuss your Individual Support Plan (ISP).
+            <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
+              Contact Zephaniah Omweno, Operations Manager, for rapid intake, staffing confirmations, and ISP alignment across Allegheny, Butler, and Washington Counties.
             </p>
+            <div className="pt-2 text-xs sm:text-sm text-slate-100 space-y-1">
+              <div><strong>Direct Phone:</strong> +1 (412) 546-1860</div>
+              <div><strong>Email:</strong> info@kenahwellness.com</div>
+              <div><strong>Office:</strong> 2400 Ansys Drive, Suite 169, Canonsburg, PA 15317</div>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-3">
             {onOpenBooking && (
               <button
-                onClick={() => onOpenBooking('ODP Waiver Intake')}
+                onClick={() => onOpenBooking('ODP Waiver Referral Intake')}
                 className="px-7 py-3 rounded-full bg-[#E89A24] hover:bg-[#d68a18] text-white font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-xs"
               >
                 <Calendar className="w-4 h-4" />

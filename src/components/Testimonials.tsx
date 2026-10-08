@@ -176,7 +176,7 @@ export const Testimonials: React.FC<TestimonialsProps> = ({
         <div className="space-y-3 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E6F7F4] text-[#0B2B26] text-xs font-bold uppercase tracking-wider border border-[#0B2B26]/10">
             <Sparkles className="w-3.5 h-3.5 text-[#E89A24]" />
-            <span>Real Family Social Proof</span>
+            <span>HAPPY CLIENT TESTIMONIALS</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B2B26] tracking-tight font-display leading-[1.15]">
             Trusted by Families Across Pennsylvania

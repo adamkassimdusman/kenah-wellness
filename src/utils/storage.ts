@@ -79,9 +79,19 @@ export function getStoredHomeCareServices(): ServiceItem[] {
       return INITIAL_HOME_CARE;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_HOME_CARE;
-  } catch (e) {
-    console.error('Failed to load home care services:', e);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.setItem(STORAGE_KEYS.HOME_CARE, JSON.stringify(INITIAL_HOME_CARE));
+      return INITIAL_HOME_CARE;
+    }
+    // Ensure all updated services from October 2026 document are represented
+    const missing = INITIAL_HOME_CARE.filter((init) => !parsed.some((p: ServiceItem) => p.id === init.id));
+    if (missing.length > 0) {
+      const merged = [...parsed, ...missing];
+      localStorage.setItem(STORAGE_KEYS.HOME_CARE, JSON.stringify(merged));
+      return merged;
+    }
+    return parsed;
+  } catch {
     return INITIAL_HOME_CARE;
   }
 }
@@ -90,8 +100,8 @@ export function saveStoredHomeCareServices(services: ServiceItem[]): void {
   try {
     localStorage.setItem(STORAGE_KEYS.HOME_CARE, JSON.stringify(services));
     notifyDataChange();
-  } catch (e) {
-    console.error('Failed to save home care services:', e);
+  } catch {
+    // silently catch storage quota errors
   }
 }
 
@@ -125,9 +135,19 @@ export function getStoredOdpServices(): ServiceItem[] {
       return INITIAL_ODP;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_ODP;
-  } catch (e) {
-    console.error('Failed to load ODP services:', e);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.setItem(STORAGE_KEYS.ODP, JSON.stringify(INITIAL_ODP));
+      return INITIAL_ODP;
+    }
+    // Ensure all updated ODP services (IHCS, Respite, CPS, HAB) are represented
+    const missing = INITIAL_ODP.filter((init) => !parsed.some((p: ServiceItem) => p.id === init.id));
+    if (missing.length > 0) {
+      const merged = [...parsed, ...missing];
+      localStorage.setItem(STORAGE_KEYS.ODP, JSON.stringify(merged));
+      return merged;
+    }
+    return parsed;
+  } catch {
     return INITIAL_ODP;
   }
 }

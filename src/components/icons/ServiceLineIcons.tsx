@@ -416,3 +416,108 @@ export const CommunityParticipationLineIcon: React.FC<IconProps> = ({
     <path d="M24 8L25 10L27 11L25 12L24 14L23 12L21 11L23 10L24 8Z" fill="#E89A24" stroke="none" />
   </svg>
 );
+
+// In-Home & Community Supports (IHCS) - One-on-one empowerment at home and in the community
+export const InHomeCommunitySupportsLineIcon: React.FC<IconProps> = ({
+  className = 'w-8 h-8',
+  size = 32,
+  color = '#0B2B26',
+  accentColor = '#4EBAA8'
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    stroke={color}
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="24" cy="24" r="21" fill="#E6F7F4" stroke="none" opacity="0.7" />
+    {/* Home roof */}
+    <path d="M12 24L24 14L36 24" stroke={color} strokeWidth="2" />
+    <path d="M16 22V36H32V22" stroke={color} strokeWidth="2" />
+    {/* Two figures side by side (1-on-1 support) */}
+    <circle cx="21" cy="26" r="2.5" fill="#FFFFFF" stroke={color} strokeWidth="1.8" />
+    <circle cx="27" cy="26" r="2.5" fill={accentColor} stroke={color} strokeWidth="1.8" />
+    <path d="M18 34C18 31 19.5 29.5 21 29.5C22 29.5 23 30 23.5 31" stroke={color} strokeWidth="1.8" />
+    <path d="M24.5 31C25 30 26 29.5 27 29.5C28.5 29.5 30 31 30 34" stroke={color} strokeWidth="1.8" />
+    {/* Compassion spark */}
+    <path d="M37 12L38 14.5L40.5 15L38 16.5L37 19L36 16.5L33.5 15L36 14.5L37 12Z" fill="#E89A24" stroke="none" />
+  </svg>
+);
+
+// Post-Discharge / Recovery Care at Home - Gentle hospital-to-home healing support
+export const PostDischargeRecoveryLineIcon: React.FC<IconProps> = ({
+  className = 'w-8 h-8',
+  size = 32,
+  color = '#0B2B26',
+  accentColor = '#E89A24'
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    stroke={color}
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="24" cy="24" r="21" fill="#F8EDE2" stroke="none" opacity="0.7" />
+    {/* Medical cross inside shield/heart */}
+    <path
+      d="M24 12C28 12 36 14 36 21C36 30 24 38 24 38C24 38 12 30 12 21C12 14 20 12 24 12Z"
+      stroke={color}
+      strokeWidth="2"
+      fill="#FFFFFF"
+    />
+    <path d="M24 19V29" stroke={accentColor} strokeWidth="2.5" />
+    <path d="M19 24H29" stroke={accentColor} strokeWidth="2.5" />
+    {/* Recovery trajectory arrow */}
+    <path d="M35 15L39 11M39 11H34M39 11V16" stroke="#4EBAA8" strokeWidth="2" />
+  </svg>
+);
+
+// Facility-Based Care - Assisted living supportive contracts
+export const FacilityBasedCareLineIcon: React.FC<IconProps> = ({
+  className = 'w-8 h-8',
+  size = 32,
+  color = '#0B2B26',
+  accentColor = '#4EBAA8'
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    stroke={color}
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="24" cy="24" r="21" fill="#FAF4EE" stroke="none" opacity="0.7" />
+    {/* Multi-story building structure */}
+    <rect x="13" y="16" width="22" height="22" rx="3" stroke={color} strokeWidth="2" fill="#FFFFFF" />
+    <path d="M18 21H20" stroke={accentColor} strokeWidth="2" />
+    <path d="M28 21H30" stroke={accentColor} strokeWidth="2" />
+    <path d="M18 26H20" stroke={accentColor} strokeWidth="2" />
+    <path d="M28 26H30" stroke={accentColor} strokeWidth="2" />
+    <path d="M22 38V32H26V38" stroke={color} strokeWidth="2" />
+    {/* Supportive heart emblem above building */}
+    <path
+      d="M24 15L22.2 13.2C19.8 10.8 18.5 9.4 18.5 7.6C18.5 6.2 19.6 5 21 5C21.8 5 22.6 5.4 23.1 6L24 7L24.9 6C25.4 5.4 26.2 5 27 5C28.4 5 29.5 6.2 29.5 7.6C29.5 9.4 28.2 10.8 25.8 13.2L24 15Z"
+      fill="#E89A24"
+      stroke={color}
+      strokeWidth="1.5"
+    />
+  </svg>
+);
+

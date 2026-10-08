@@ -17,7 +17,11 @@ import {
   ArrowUpRight,
   ExternalLink,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Users,
+  CreditCard,
+  Award,
+  Sparkles
 } from 'lucide-react';
 import { HowItWorksIllustration } from '../components/illustrations/HowItWorksIllustration';
 import { MirrorIllustration } from '../components/illustrations/MirrorIllustration';
@@ -36,9 +40,18 @@ import {
   InHomeRespiteLineIcon,
   OutOfHomeRespiteLineIcon,
   HabilitationLineIcon,
-  CommunityParticipationLineIcon
+  CommunityParticipationLineIcon,
+  InHomeCommunitySupportsLineIcon,
+  PostDischargeRecoveryLineIcon,
+  FacilityBasedCareLineIcon
 } from '../components/icons/ServiceLineIcons';
-import { FAQS } from '../data/servicesData';
+import {
+  FAQS,
+  COMPANY_DETAILS,
+  PAYMENT_OPTIONS,
+  WHO_WE_SERVE,
+  WHY_CHOOSE_US
+} from '../data/servicesData';
 import { PageId, ServiceItem, BlogPost } from '../types';
 import {
   getStoredBlogs,
@@ -179,6 +192,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         return <SpecializedSupportLineIcon size={size} />;
       case 'additional-services':
         return <AdditionalServicesLineIcon size={size} />;
+      case 'in-home-community-supports-ihcs':
+        return <InHomeCommunitySupportsLineIcon size={size} />;
       case 'in-home-respite':
         return <InHomeRespiteLineIcon size={size} />;
       case 'out-of-home-respite':
@@ -187,6 +202,10 @@ export const HomePage: React.FC<HomePageProps> = ({
         return <HabilitationLineIcon size={size} />;
       case 'community-participation-support-cps':
         return <CommunityParticipationLineIcon size={size} />;
+      case 'post-discharge-recovery-care':
+        return <PostDischargeRecoveryLineIcon size={size} />;
+      case 'facility-based-care':
+        return <FacilityBasedCareLineIcon size={size} />;
       default:
         return <PersonalCareLineIcon size={size} />;
     }
@@ -270,6 +289,50 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* =========================================================
+          OVERVIEW BAR: ODP PROVIDER #104556630 & TAGLINE
+          Directly from Client Update Document (Section 1)
+         ========================================================= */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-20 relative z-20">
+        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-[#EADBCC] flex flex-col lg:flex-row items-center justify-between gap-6">
+          <div className="space-y-2 text-center lg:text-left flex-1">
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
+              <span className="px-3.5 py-1 rounded-full bg-[#E6F7F4] text-[#0B2B26] text-xs font-extrabold uppercase tracking-wider border border-[#4EBAA8]/40 shadow-2xs">
+                ODP-Approved Provider #104556630
+              </span>
+              <span className="px-3 py-1 rounded-full bg-[#FAF4EE] text-[#0B2B26] text-xs font-semibold border border-[#EADBCC]">
+                Allegheny · Butler · Washington Counties
+              </span>
+              <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-900 text-xs font-bold border border-amber-200/60">
+                Caring Beyond the Call
+              </span>
+            </div>
+            <p className="text-sm sm:text-base text-slate-800 font-medium leading-relaxed pt-1">
+              Kenah Wellness Services is an ODP-approved provider (Provider #104556630) and home care agency serving Allegheny, Butler and Washington Counties. We deliver person-centered support for individuals with intellectual disabilities and autism, older adults, adults with physical disabilities, and people recovering at home after a hospital stay.
+            </p>
+            <div className="text-xs sm:text-sm font-bold text-[#E89A24] tracking-wide pt-1">
+              ODP Waiver Services &nbsp;|&nbsp; Home Care &nbsp;|&nbsp; Respite &nbsp;|&nbsp; Community Participation &nbsp;|&nbsp; Habilitation
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0 w-full sm:w-auto">
+            <button
+              onClick={onOpenAssessment}
+              className="px-7 py-3.5 rounded-full bg-[#E89A24] hover:bg-[#d68a18] text-white font-bold text-xs sm:text-sm transition-all shadow-md active:scale-95 cursor-pointer text-center"
+            >
+              Book Free Assessment
+            </button>
+            <a
+              href="tel:+14125461860"
+              className="px-6 py-3 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-semibold text-xs sm:text-sm transition-colors text-center cursor-pointer inline-flex items-center justify-center gap-2"
+            >
+              <Phone className="w-3.5 h-3.5 text-[#E89A24]" />
+              <span>+1 (412) 546-1860</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
           SPOTLIGHT: WHO WE SUPPORT - ELDERS & PEOPLE WITH ODP
           Authentic imagery helping families feel at home, with mobile/tablet
           optimization to prevent scrolling fatigue!
@@ -307,7 +370,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </div>
 
                 <h3 className="text-xl font-bold text-[#0B2B26] font-display pt-1">
-                  Honoring Elders with Dignity & Independence
+                  Home Help for Seniors Across Western PA
                 </h3>
 
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
@@ -636,6 +699,136 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
           </div>
         </div>
+
+        {/* =========================================================
+            WHO WE SERVE (Client Update Document - Section 5)
+           ========================================================= */}
+        <div className="mt-16 pt-8 border-t border-slate-200/80">
+          <div className="max-w-3xl mb-10 text-left">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#E89A24] block mb-2">
+              PERSON-CENTERED POPULATIONS
+            </span>
+            <h3 className="text-2xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
+              Who We Serve
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+              We deliver compassionate, tailored care for individuals and families across Allegheny, Butler, and Washington Counties:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {WHO_WE_SERVE.map((item, index) => (
+              <div
+                key={index}
+                className="rounded-3xl bg-white border border-slate-200/90 p-6 shadow-xs hover:border-[#0B2B26]/30 transition-all hover:shadow-md flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#FAF4EE] text-[#0B2B26] flex items-center justify-center font-bold text-sm">
+                    {index + 1}
+                  </div>
+                  <h4 className="text-base sm:text-lg font-bold text-[#0B2B26] font-display">
+                    {item.title}
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center gap-1.5 text-xs font-semibold text-[#0B2B26]">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#4EBAA8]" />
+                  <span>Person-Centered Care Plan</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* =========================================================
+            PAYMENT OPTIONS WE ACCEPT (Client Update Document - Section 6)
+           ========================================================= */}
+        <div className="mt-20 pt-8 border-t border-slate-200/80">
+          <div className="max-w-3xl mb-10 text-left">
+            <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block mb-2">
+              FINANCIAL & PROGRAM FUNDING
+            </span>
+            <h3 className="text-2xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
+              Payment Options We Accept
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+              Kenah Wellness works with families, state agencies, and healthcare insurers to ensure access to essential support:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {PAYMENT_OPTIONS.map((opt, i) => (
+              <div
+                key={i}
+                className="rounded-3xl bg-white border border-slate-200/90 p-6 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#E6F7F4] text-emerald-900 text-[10px] font-bold uppercase tracking-wider border border-emerald-200/60">
+                      {opt.badge}
+                    </span>
+                    <CreditCard className="w-4 h-4 text-slate-400" />
+                  </div>
+                  <h4 className="text-lg font-bold text-[#0B2B26] font-display">
+                    {opt.source}
+                  </h4>
+                  <p className="mt-2 text-xs text-slate-600 leading-relaxed">
+                    {opt.description}
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap gap-1.5">
+                  {opt.programs.map((prog, pIdx) => (
+                    <span
+                      key={pIdx}
+                      className="px-2 py-0.5 rounded-md bg-slate-50 text-slate-600 text-[10px] font-medium"
+                    >
+                      {prog}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* =========================================================
+            WHY CHOOSE KENAH WELLNESS SERVICES? (Section 8 Corrections)
+           ========================================================= */}
+        <div className="mt-20 pt-8 border-t border-slate-200/80">
+          <div className="max-w-3xl mb-10 text-left">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#E89A24] block mb-2">
+              DEDICATED QUALITY CARE
+            </span>
+            <h3 className="text-2xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
+              Why Choose Kenah Wellness Services?
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+              We stand apart through clinical excellence, continuous training, and person-centered dedication:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {WHY_CHOOSE_US.map((item, idx) => (
+              <div
+                key={idx}
+                className="rounded-3xl bg-[#FAF4EE] border border-[#EADBCC] p-6 shadow-2xs hover:bg-white transition-colors"
+              >
+                <div className="w-8 h-8 rounded-xl bg-white text-[#0B2B26] flex items-center justify-center font-bold text-xs mb-3 shadow-2xs border border-slate-200/60">
+                  <Award className="w-4 h-4 text-[#E89A24]" />
+                </div>
+                <h4 className="text-base font-bold text-[#0B2B26] font-display mb-1.5">
+                  {item.title}
+                </h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </section>
 
       {/* =========================================================
@@ -789,11 +982,11 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <span>Book Free Assessment</span>
               </button>
               <a
-                href="tel:7245842817"
+                href="tel:+14125461860"
                 className="w-full py-3.5 px-8 rounded-full bg-white hover:bg-slate-50 text-[#0B2B26] border border-slate-300 font-semibold text-xs sm:text-sm transition-colors text-center cursor-pointer inline-flex items-center justify-center gap-2"
               >
                 <Phone className="w-4 h-4 text-[#0B2B26]" />
-                <span>Call (724) 584-2817</span>
+                <span>Call +1 (412) 546-1860</span>
               </a>
             </div>
           </div>
@@ -883,7 +1076,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               Contact Details:
             </h3>
 
-            <div className="space-y-3 text-sm text-slate-700">
+            <div className="space-y-3.5 text-sm text-slate-700">
               <div>
                 <strong className="text-slate-900">Email:</strong>{' '}
                 <a href="mailto:info@kenahwellness.com" className="hover:underline">
@@ -898,7 +1091,18 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
               <div>
                 <strong className="text-slate-900">Address:</strong>{' '}
-                <span>2400 Ansys Drive Suite 169, Canonsburg, PA 15317</span>
+                <span>2400 Ansys Drive, Suite 169, Canonsburg, PA 15317</span>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-[#FAF4EE] border border-[#EADBCC] text-xs">
+                <strong className="text-[#0B2B26] block font-bold mb-0.5">
+                  Direct Referrals Contact:
+                </strong>
+                <span className="text-slate-700">
+                  Zephaniah Omweno, Operations Manager
+                </span>
+                <span className="block text-[11px] text-slate-500 mt-0.5">
+                  Direct SC coordination across Allegheny, Butler & Washington Counties
+                </span>
               </div>
             </div>
 

@@ -330,11 +330,11 @@ export const BlogPage: React.FC<BlogPageProps> = ({
                 Schedule Free Assessment
               </button>
               <a
-                href="tel:7245842817"
+                href="tel:+14125461860"
                 className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-sm transition-all border border-white/20 inline-flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
               >
                 <Phone className="w-4 h-4 text-[#F2D701]" />
-                <span>Call (724) 584-2817</span>
+                <span>Call +1 (412) 546-1860</span>
               </a>
             </div>
           </div>

@@ -29,8 +29,12 @@ import {
   InHomeRespiteLineIcon,
   OutOfHomeRespiteLineIcon,
   HabilitationLineIcon,
-  CommunityParticipationLineIcon
+  CommunityParticipationLineIcon,
+  InHomeCommunitySupportsLineIcon,
+  PostDischargeRecoveryLineIcon,
+  FacilityBasedCareLineIcon
 } from '../components/icons/ServiceLineIcons';
+import { COMPANY_DETAILS, PAYMENT_OPTIONS } from '../data/servicesData';
 
 interface ServiceDetailPageProps {
   service: ServiceItem | null;
@@ -78,6 +82,8 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
         return <SpecializedSupportLineIcon size={size} />;
       case 'additional-services':
         return <AdditionalServicesLineIcon size={size} />;
+      case 'in-home-community-supports-ihcs':
+        return <InHomeCommunitySupportsLineIcon size={size} />;
       case 'in-home-respite':
         return <InHomeRespiteLineIcon size={size} />;
       case 'out-of-home-respite':
@@ -86,6 +92,10 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
         return <HabilitationLineIcon size={size} />;
       case 'community-participation-support-cps':
         return <CommunityParticipationLineIcon size={size} />;
+      case 'post-discharge-recovery-care':
+        return <PostDischargeRecoveryLineIcon size={size} />;
+      case 'facility-based-care':
+        return <FacilityBasedCareLineIcon size={size} />;
       default:
         return <PersonalCareLineIcon size={size} />;
     }
@@ -172,11 +182,11 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
                 </button>
 
                 <a
-                  href="tel:7245842817"
+                  href={`tel:${COMPANY_DETAILS.phoneClean}`}
                   className="px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-sm sm:text-base transition-all border border-white/20 inline-flex items-center gap-2 cursor-pointer"
                 >
                   <Phone className="w-4 h-4 text-[#F2D701]" />
-                  <span>Call (724) 584-2817</span>
+                  <span>Call {COMPANY_DETAILS.phone}</span>
                 </a>
               </div>
             </div>
@@ -368,55 +378,48 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
               </button>
 
               <a
-                href="tel:7245842817"
+                href={`tel:${COMPANY_DETAILS.phoneClean}`}
                 className="w-full py-3 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition-all border border-white/20 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Phone className="w-3.5 h-3.5 text-[#F2D701]" />
-                <span>Call Us: (724) 584-2817</span>
+                <span>Call Us: {COMPANY_DETAILS.phone}</span>
               </a>
             </div>
 
-            {/* Payment & Funding Guidance */}
+            {/* Payment & Funding Guidance (Section 6) */}
             <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
               <div className="flex items-center gap-2.5 mb-4 text-[#0B2B26]">
                 <FileText className="w-5 h-5 text-[#E89A24]" />
                 <h3 className="text-base sm:text-lg font-bold font-display">
-                  Payment & Coverage Options
+                  Payment Options We Accept
                 </h3>
               </div>
               <p className="text-xs text-slate-600 mb-4 leading-relaxed">
-                We accept multiple funding options to ensure care is accessible for Pennsylvania families:
+                We work with state programs, insurance providers, and flexible private-pay options:
               </p>
 
-              <ul className="space-y-2.5 text-xs text-slate-700">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#4EBAA8] shrink-0 mt-0.5" />
-                  <span><strong>PA ODP Waivers:</strong> Consolidated, Community Living, and P/FDS authorized billing.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#4EBAA8] shrink-0 mt-0.5" />
-                  <span><strong>Private Pay:</strong> Transparent hourly rates with no hidden fees or contracts.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#4EBAA8] shrink-0 mt-0.5" />
-                  <span><strong>Long-Term Care Insurance:</strong> Direct claim filing and documentation support.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#4EBAA8] shrink-0 mt-0.5" />
-                  <span><strong>Veterans (VA) Benefits:</strong> Aid and Attendance supportive care programs.</span>
-                </li>
+              <ul className="space-y-3 text-xs text-slate-700">
+                {PAYMENT_OPTIONS.map((opt, oIdx) => (
+                  <li key={oIdx} className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#4EBAA8] shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-slate-900">{opt.source}:</strong>{' '}
+                      <span className="text-slate-600">{opt.description}</span>
+                    </div>
+                  </li>
+                ))}
               </ul>
             </div>
 
             {/* Browse All Services Jump Menu */}
             <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
               <h3 className="text-base sm:text-lg font-bold text-[#0B2B26] font-display mb-4">
-                Browse All Services
+                Browse All Services ({ALL_SERVICES.length})
               </h3>
 
               <div className="space-y-1.5 max-h-[380px] overflow-y-auto pr-1">
                 <div className="text-[11px] font-bold uppercase text-slate-400 tracking-wider py-1">
-                  Home Care Services (8)
+                  Home Care Services ({HOME_CARE_SERVICES.length})
                 </div>
                 {HOME_CARE_SERVICES.map((s) => (
                   <button

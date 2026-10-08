@@ -124,7 +124,7 @@ export const BLOG_POSTS: BlogPost[] = [
       'Kenah Wellness Services is thrilled to announce the expansion of our dedicated caregiver and Direct Support Professional (DSP) teams across Allegheny, Washington, Westmoreland, and Butler counties.',
       'With this initiative, families requesting both Senior Home Care and Pennsylvania ODP Waiver services can expect rapid 24 to 48-hour intake turnaround, personalized caregiver matching, and zero compromise on person-centered dignity.',
       'Our team is also rolling out complimentary family in-home care assessments conducted by licensed clinical care coordinators to help families evaluate both waiver eligibility and personalized respite needs.',
-      'For more information or to connect with our care management team, call our direct line at (724) 584-2817 or submit an intake request through our online assessment portal.'
+      'For more information or to connect with our care management team, call our direct line at +1 (412) 546-1860 or submit an intake request through our online assessment portal.'
     ]
   }
 ];

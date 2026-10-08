@@ -1,6 +1,6 @@
 {
   "name": "Kenah Wellness Services",
-  "description": "Quality Home Care and Pennsylvania ODP Waiver Services supporting individuals with intellectual and developmental disabilities and seniors across Western PA.",
+  "description": "ODP-approved provider (#104556630) and home care agency serving Allegheny, Butler, and Washington Counties with person-centered support, respite, and habilitation.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

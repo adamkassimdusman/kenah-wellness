@@ -112,7 +112,7 @@ export const TestimonialsPage: React.FC<TestimonialsPageProps> = ({
           <div className="max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-sm text-[#0B2B26] text-xs font-bold uppercase tracking-wider border border-[#0B2B26]/10">
               <Heart className="w-3.5 h-3.5 text-[#E89A24]" />
-              <span>Voice of Our Families</span>
+              <span>HAPPY CLIENT TESTIMONIALS</span>
             </div>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-[#0B2B26] font-display tracking-tight text-balance leading-[1.12]">
               Heartfelt Stories from the Families We Serve

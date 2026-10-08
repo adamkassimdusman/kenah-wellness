@@ -226,11 +226,11 @@ export const BlogDetailPage: React.FC<BlogDetailPageProps> = ({
                 Book Free Assessment
               </button>
               <a
-                href="tel:7245842817"
+                href="tel:+14125461860"
                 className="w-full sm:w-auto px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
               >
                 <Phone className="w-3.5 h-3.5 text-[#F2D701]" />
-                <span>(724) 584-2817</span>
+                <span>+1 (412) 546-1860</span>
               </a>
             </div>
           </div>
