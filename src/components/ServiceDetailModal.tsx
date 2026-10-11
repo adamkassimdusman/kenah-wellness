@@ -169,9 +169,9 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
                   onClose();
                   onOpenBooking(service.title);
                 }}
-                className="px-4 py-2.5 rounded-full bg-[#E89A24] hover:bg-[#d68a18] text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer shadow-xs"
+                className="px-4 py-2.5 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer shadow-xs"
               >
-                <Calendar className="w-3.5 h-3.5" />
+                <Calendar className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Book a Session</span>
               </button>
             )}

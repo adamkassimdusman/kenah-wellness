@@ -1,5 +1,6 @@
 export type PageId =
   | 'home'
+  | 'services'
   | 'about'
   | 'home-care'
   | 'odp-waiver'

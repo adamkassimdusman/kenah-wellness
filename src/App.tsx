@@ -13,6 +13,7 @@ import { ServiceDetailModal } from './components/ServiceDetailModal';
 import { SearchModal } from './components/SearchModal';
 import { HomePage } from './pages/HomePage';
 import { AboutPage } from './pages/AboutPage';
+import { ServicesPage } from './pages/ServicesPage';
 import { HomeCarePage } from './pages/HomeCarePage';
 import { OdpWaiverPage } from './pages/OdpWaiverPage';
 import { BlogPage } from './pages/BlogPage';
@@ -45,6 +46,9 @@ export default function App() {
     switch (currentPage) {
       case 'home':
         document.title = 'Kenah Wellness Services | Home Care & Pennsylvania ODP Waiver Services';
+        break;
+      case 'services':
+        document.title = 'Dedicated Services Directory | ODP Waiver & Home Care Services | Kenah Wellness';
         break;
       case 'about':
         document.title = 'About Us | Kenah Wellness Services | Mission & ODP Waiver Standards';
@@ -168,6 +172,14 @@ export default function App() {
             onOpenBooking={handleOpenBooking}
             onSelectService={handleSelectService}
             onSelectBlog={handleSelectBlog}
+          />
+        )}
+
+        {currentPage === 'services' && (
+          <ServicesPage
+            onNavigate={handleNavigate}
+            onOpenAssessment={handleOpenAssessment}
+            onSelectService={handleSelectService}
           />
         )}
 

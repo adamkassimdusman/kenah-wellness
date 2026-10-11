@@ -101,7 +101,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate, onOpenAsse
             <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block">
               GET IN TOUCH
             </span>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-[#0B2B26] font-display tracking-tight text-balance leading-[1.12]">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B2B26] font-display tracking-tight text-balance leading-tight">
               We’re Here to Support You
             </h1>
             <p className="text-sm sm:text-base text-slate-700 leading-relaxed max-w-2xl pt-1">
@@ -143,15 +143,15 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate, onOpenAsse
                     United States
                   </span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#FAF4EE] border border-[#EADBCC] text-xs">
-                  <strong className="text-[#0B2B26] block font-bold text-sm mb-1">
-                    Referrals & Intake Coordination:
+                <div className="p-4 rounded-2xl bg-[#FAF4EE] border border-[#EADBCC] text-sm">
+                  <strong className="text-[#0B2B26] block font-bold text-base mb-1">
+                    Referrals & Care Intake:
                   </strong>
-                  <div className="text-slate-800 font-medium">
-                    Zephaniah Omweno, Operations Manager
+                  <div className="text-slate-800 font-semibold">
+                    Care Coordination & Intake Team
                   </div>
-                  <div className="text-slate-500 text-[11px] mt-0.5">
-                    Direct line for County Supports Coordinators (SCs), hospital discharge planners & families across Allegheny, Butler and Washington Counties.
+                  <div className="text-slate-600 text-xs mt-1">
+                    Direct line for Supports Coordinators (SCs), hospital discharge planners, and families.
                   </div>
                 </div>
               </div>

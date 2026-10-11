@@ -1,66 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ArrowLeft,
-  ArrowRight,
-  Plus,
-  Minus,
-  Linkedin,
-  Facebook,
-  Instagram,
-  Phone,
   Calendar,
+  Phone,
+  ArrowRight,
+  ExternalLink,
   ShieldCheck,
   CheckCircle2,
-  Clock,
-  Heart,
-  BookOpen,
-  ArrowUpRight,
-  ExternalLink,
+  Home,
   ChevronLeft,
-  ChevronRight,
-  Users,
-  CreditCard,
-  Award,
-  Sparkles
+  ChevronRight
 } from 'lucide-react';
-import { HowItWorksIllustration } from '../components/illustrations/HowItWorksIllustration';
-import { MirrorIllustration } from '../components/illustrations/MirrorIllustration';
-import { CommunityClusterIllustration } from '../components/illustrations/CommunityClusterIllustration';
-import { FaqFlowerHeadIllustration } from '../components/illustrations/FaqFlowerHeadIllustration';
+import { PageId, ServiceItem, BlogPost } from '../types';
+import {
+  ODP_WAIVER_SERVICES,
+  HOME_CARE_SERVICES,
+  ODP_HCSIS_DIRECTORY_URL,
+  COMPANY_DETAILS,
+  PAYMENT_OPTIONS
+} from '../data/servicesData';
 import { Testimonials } from '../components/Testimonials';
 import {
-  PersonalCareLineIcon,
-  SeniorCareLineIcon,
-  EndOfLifeCareLineIcon,
-  RespiteCareLineIcon,
-  DementiaCareLineIcon,
-  CompanionCareLineIcon,
-  SpecializedSupportLineIcon,
-  AdditionalServicesLineIcon,
   InHomeRespiteLineIcon,
   OutOfHomeRespiteLineIcon,
   HabilitationLineIcon,
   CommunityParticipationLineIcon,
-  InHomeCommunitySupportsLineIcon,
-  PostDischargeRecoveryLineIcon,
-  FacilityBasedCareLineIcon
+  PersonalCareLineIcon,
+  CompanionCareLineIcon,
+  HomemakerLineIcon
 } from '../components/icons/ServiceLineIcons';
-import {
-  FAQS,
-  COMPANY_DETAILS,
-  PAYMENT_OPTIONS,
-  WHO_WE_SERVE,
-  WHY_CHOOSE_US
-} from '../data/servicesData';
-import { PageId, ServiceItem, BlogPost } from '../types';
-import {
-  getStoredBlogs,
-  getStoredHomeCareServices,
-  getStoredOdpServices,
-  DATA_CHANGE_EVENT
-} from '../utils/storage';
-import { trackEvent } from '../utils/analytics';
-import { apiSubmitContact } from '../utils/api';
 
 interface HomePageProps {
   onNavigate: (page: PageId) => void;
@@ -72,244 +39,196 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({
   onNavigate,
-  onOpenAssessment,
-  onOpenBooking,
-  onSelectService,
-  onSelectBlog
+  onOpenAssessment
 }) => {
-  const [serviceTab, setServiceTab] = useState<'all' | 'home-care' | 'odp-waiver'>('all');
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
-
-  // Hero Dual Carousel State: Senior Home Care & ODP Program
-  const [heroSlide, setHeroSlide] = useState<0 | 1>(0);
-  const [heroAutoplay, setHeroAutoplay] = useState(true);
+  // Hero Carousel State: Slide 1 = Person with ODP, Slide 2 = Elderly seeking Home Care
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
 
   const heroSlides = [
     {
-      id: 'senior-care',
-      title: 'Compassionate Care. Greater Independence. Stronger Communities.',
-      description:
-        'Kenah Wellness Services provides quality in-home senior care designed to preserve dignity, promote safety, and empower older adults to age in place comfortably in their cherished homes.',
-      image: '/Hero.jpg'
+      id: 'odp',
+      tag: 'ODP Waiver Services',
+      title: 'Person with ODP Receiving Dedicated Support',
+      description: 'Person-centered habilitation, community participation (CPS), and respite for individuals and families.',
+      image: '/odp_community_participation_1790585609197.jpg',
+      alt: 'Person with ODP participating actively with supportive care'
     },
     {
-      id: 'odp-waiver',
-      title: 'Empowering Adults with Intellectual & Developmental Disabilities.',
-      description:
-        'Comprehensive Pennsylvania ODP Waiver supports including In-Home & Out-of-Home Respite, Community Participation Support (CPS), and life-enriching Habilitation tailored to each individual.',
-      image: '/odp_community_participation_1790585609197.jpg'
+      id: 'home-care',
+      tag: 'Non-Medical Home Care',
+      title: 'Elderly Individual Seeking Home Care',
+      description: 'Dignified personal care, companionship, and homemaker assistance preserving senior independence at home.',
+      image: '/home_care_support_1790585595209.jpg',
+      alt: 'Elderly individual receiving compassionate home care support'
     }
   ];
 
   useEffect(() => {
-    if (!heroAutoplay) return;
-    const timer = setInterval(() => {
-      setHeroSlide((prev) => (prev === 0 ? 1 : 0));
-    }, 4000); // Cycles every 4 seconds as requested
-    return () => clearInterval(timer);
-  }, [heroAutoplay]);
+    if (isCarouselPaused) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5500);
+    return () => clearInterval(interval);
+  }, [isCarouselPaused, heroSlides.length]);
 
-  // Dynamic state loaded from storage (synced with admin updates)
-  const [blogsList, setBlogsList] = useState<BlogPost[]>(() => getStoredBlogs());
-  const [homeCareList, setHomeCareList] = useState<ServiceItem[]>(() => getStoredHomeCareServices());
-  const [odpList, setOdpList] = useState<ServiceItem[]>(() => getStoredOdpServices());
-
-  useEffect(() => {
-    const handleDataUpdate = () => {
-      setBlogsList(getStoredBlogs());
-      setHomeCareList(getStoredHomeCareServices());
-      setOdpList(getStoredOdpServices());
-    };
-    window.addEventListener(DATA_CHANGE_EVENT, handleDataUpdate);
-    return () => window.removeEventListener(DATA_CHANGE_EVENT, handleDataUpdate);
-  }, []);
-
-  const [contactEmail, setContactEmail] = useState('');
-  const [contactMessage, setContactMessage] = useState('');
-  const [contactHoneypot, setContactHoneypot] = useState('');
-  const [contactError, setContactError] = useState<string | null>(null);
-  const [contactSubmitted, setContactSubmitted] = useState(false);
-
-  const toggleFaq = (index: number) => {
-    setOpenFaqIndex(openFaqIndex === index ? null : index);
+  const handlePrevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
   };
 
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setContactError(null);
-
-    // Spam bot honeypot protection
-    if (contactHoneypot.trim()) {
-      // Silently pretend success to bots without processing
-      setContactSubmitted(true);
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(contactEmail.trim())) {
-      setContactError('Please provide a valid email address.');
-      return;
-    }
-
-    if (!contactMessage.trim()) {
-      setContactError('Please include a message describing how we can help.');
-      return;
-    }
-
-    const res = await apiSubmitContact({
-      name: 'Website Visitor',
-      email: contactEmail.trim(),
-      message: contactMessage.trim(),
-      hp_contact_check: contactHoneypot.trim(),
-    });
-
-    if (!res.success && res.error) {
-      setContactError(res.error);
-      return;
-    }
-
-    trackEvent('contact_inquiry_submitted', { source: 'homepage' });
-    setContactSubmitted(true);
-    setContactEmail('');
-    setContactMessage('');
+  const handleNextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
   };
 
-  const renderServiceLineIcon = (id: string, size = 44) => {
-    switch (id) {
-      case 'personal-care':
-        return <PersonalCareLineIcon size={size} />;
-      case 'senior-care':
-        return <SeniorCareLineIcon size={size} />;
-      case 'end-of-life-care':
-        return <EndOfLifeCareLineIcon size={size} />;
-      case 'respite-care':
-        return <RespiteCareLineIcon size={size} />;
-      case 'dementia-care':
-        return <DementiaCareLineIcon size={size} />;
-      case 'companionship-care':
-        return <CompanionCareLineIcon size={size} />;
-      case 'specialized-support':
-        return <SpecializedSupportLineIcon size={size} />;
-      case 'additional-services':
-        return <AdditionalServicesLineIcon size={size} />;
-      case 'in-home-community-supports-ihcs':
-        return <InHomeCommunitySupportsLineIcon size={size} />;
-      case 'in-home-respite':
-        return <InHomeRespiteLineIcon size={size} />;
-      case 'out-of-home-respite':
-        return <OutOfHomeRespiteLineIcon size={size} />;
-      case 'habilitation-hab':
-        return <HabilitationLineIcon size={size} />;
-      case 'community-participation-support-cps':
-        return <CommunityParticipationLineIcon size={size} />;
-      case 'post-discharge-recovery-care':
-        return <PostDischargeRecoveryLineIcon size={size} />;
-      case 'facility-based-care':
-        return <FacilityBasedCareLineIcon size={size} />;
-      default:
-        return <PersonalCareLineIcon size={size} />;
+  // 3 Selected Home Care Services for the Home Section
+  const homeCareHighlightCards = [
+    {
+      id: 'personal-care',
+      title: 'Personal Care',
+      tagline: 'Nurse-Supervised · 24/7 Available',
+      desc: 'Bathing, grooming, dressing, toileting, hygiene, and safe mobility assistance preserving dignity and comfort.',
+      icon: <PersonalCareLineIcon size={28} className="w-7 h-7" />
+    },
+    {
+      id: 'companion-care',
+      title: 'Companion Care',
+      tagline: 'Emotional Wellness · Daily Check-Ins',
+      desc: 'Warm social engagement, stimulating conversation, walk accompaniment, and comforting presence preventing loneliness.',
+      icon: <CompanionCareLineIcon size={28} className="w-7 h-7" />
+    },
+    {
+      id: 'homemaker-services',
+      title: 'Homemaker Services',
+      tagline: 'Clean Living Sanctuary · Safe Environment',
+      desc: 'Light housekeeping, laundry, fresh linens, kitchen cleaning, dishwashing, and fall-hazard reduction.',
+      icon: <HomemakerLineIcon size={28} className="w-7 h-7" />
     }
-  };
+  ];
 
   return (
-    <div className="space-y-24 sm:space-y-32 pb-24 text-left font-sans">
+    <div className="space-y-12 sm:space-y-16 pb-20 text-left font-sans">
+      
       {/* =========================================================
-          1. HERO SECTION (Clean, Uncluttered 4-Second Carousel)
-             ONLY Header, Paragraph, and Free Assessment button,
-             with matching background picture behind the text!
+          1. HERO SECTION:
+             - Simple layout: Image behind the text
+             - Just heading, paragraph, and ONLY two buttons:
+               "Book Free Assessment" & "Explore Services"
+             - Simple background carousel:
+               (1) Person with ODP, (2) Elderly seeking home care
+             - No generic top badges / pills ("ODP-Approved Provider...")
+             - Normal readable typography, dominant brand green theme
          ========================================================= */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         <div
-          className="relative w-full rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] overflow-hidden p-8 sm:p-14 lg:p-20 shadow-lg border border-[#EADBCC] text-white min-h-[460px] sm:min-h-[500px] lg:min-h-[540px] flex flex-col justify-center"
-          onMouseEnter={() => setHeroAutoplay(false)}
-          onMouseLeave={() => setHeroAutoplay(true)}
+          className="relative rounded-3xl sm:rounded-4xl overflow-hidden min-h-[460px] sm:min-h-[500px] flex items-center shadow-lg border border-[#EADBCC]"
+          onMouseEnter={() => setIsCarouselPaused(true)}
+          onMouseLeave={() => setIsCarouselPaused(false)}
         >
-          {/* Background Images for Carousel with smooth crossfade */}
+          {/* Background Images Carousel Behind the Text */}
           {heroSlides.map((slide, index) => (
-            <div
+            <img
               key={slide.id}
-              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${
-                heroSlide === index ? 'opacity-100 z-0' : 'opacity-0 -z-10'
+              src={slide.image}
+              alt={slide.alt}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+                index === currentSlide ? 'opacity-100' : 'opacity-0'
               }`}
-              style={{
-                backgroundImage: `url('${slide.image}')`,
-                backgroundPosition: index === 0 ? 'center 30%' : 'center 26%'
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (target.src !== '/Hero.jpg') {
+                  target.src = '/Hero.jpg';
+                }
               }}
             />
           ))}
 
-          {/* Contrast-Ensuring Brand Overlay (Deep Pine Teal) */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0B2B26]/95 via-[#0B2B26]/85 to-[#0B2B26]/60 z-1 pointer-events-none" />
+          {/* Clean Gradient Overlay for High Legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0B2B26]/92 via-[#0B2B26]/75 to-[#0B2B26]/40 sm:to-transparent" />
+          <div className="absolute inset-0 bg-black/25" />
 
-          {/* Clean, Uncluttered Hero Content: ONLY Header, Paragraph, and Free Assessment Button */}
-          <div className="relative z-10 max-w-3xl space-y-6 text-left">
-            <h1 className="text-3xl sm:text-5xl lg:text-[54px] font-extrabold text-white tracking-tight font-display leading-[1.12] text-balance drop-shadow-sm">
-              {heroSlides[heroSlide].title}
+          {/* Foreground Content: Just the heading, paragraph, and the two buttons */}
+          <div className="relative z-10 p-6 sm:p-12 lg:p-16 max-w-2xl text-white space-y-5">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display tracking-tight leading-tight text-white drop-shadow-sm">
+              Find Support, Guidance, and Balance.
             </h1>
 
-            <p className="text-base sm:text-lg lg:text-xl text-slate-100 max-w-2xl leading-relaxed font-normal drop-shadow-xs">
-              {heroSlides[heroSlide].description}
+            <p className="text-sm sm:text-base lg:text-lg text-slate-100 font-normal leading-relaxed max-w-xl drop-shadow-xs">
+              Compassionate non-medical Home Care and Pennsylvania ODP Waiver Services. Supporting individuals and families with dignity, purpose, and peace of mind.
             </p>
 
-            <div className="pt-2">
+            {/* ONLY the two requested buttons: Book Free Assessment & Explore Services */}
+            <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4">
               <button
                 onClick={onOpenAssessment}
-                className="px-9 py-4 rounded-full bg-[#E89A24] hover:bg-[#d68a18] active:scale-95 text-white font-bold text-base sm:text-lg transition-all shadow-xl cursor-pointer inline-flex items-center gap-2.5"
+                className="px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-white hover:bg-slate-100 active:scale-95 text-[#0B2B26] font-bold text-sm sm:text-base transition-all shadow-md flex items-center gap-2 cursor-pointer"
               >
-                <Calendar className="w-5 h-5" />
-                <span>Free Assessment</span>
+                <Calendar className="w-4 h-4 text-[#0B2B26]" />
+                <span>Book Free Assessment</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('services')}
+                className="px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold text-sm sm:text-base border border-white/50 hover:border-white transition-all shadow-xs flex items-center gap-2 cursor-pointer backdrop-blur-xs"
+              >
+                <span>Explore Services</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* Minimal 4-Second Carousel Indicator Dots */}
-          <div className="absolute bottom-6 right-8 sm:bottom-8 sm:right-12 z-10 flex items-center gap-2">
+          {/* Simple Carousel Slide Switcher */}
+          <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 flex items-center gap-2 bg-[#0B2B26]/50 backdrop-blur-sm p-1.5 rounded-full border border-white/20">
             <button
-              onClick={() => {
-                setHeroSlide(0);
-                setHeroAutoplay(false);
-              }}
-              className={`h-2 rounded-full transition-all cursor-pointer ${
-                heroSlide === 0 ? 'w-8 bg-[#E89A24]' : 'w-2.5 bg-white/40 hover:bg-white/70'
-              }`}
-              aria-label="Slide 1: Senior Care"
-            />
+              onClick={handlePrevSlide}
+              className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center transition-all cursor-pointer"
+              aria-label="Previous slide"
+              title="Previous slide"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <div className="flex items-center gap-1.5 px-1.5">
+              {heroSlides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentSlide(i)}
+                  className={`h-2 rounded-full transition-all cursor-pointer ${
+                    i === currentSlide ? 'w-5 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'
+                  }`}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
+            </div>
             <button
-              onClick={() => {
-                setHeroSlide(1);
-                setHeroAutoplay(false);
-              }}
-              className={`h-2 rounded-full transition-all cursor-pointer ${
-                heroSlide === 1 ? 'w-8 bg-[#E89A24]' : 'w-2.5 bg-white/40 hover:bg-white/70'
-              }`}
-              aria-label="Slide 2: ODP Program"
-            />
+              onClick={handleNextSlide}
+              className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center transition-all cursor-pointer"
+              aria-label="Next slide"
+              title="Next slide"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </section>
 
       {/* =========================================================
-          OVERVIEW BAR: ODP PROVIDER #104556630 & TAGLINE
-          Directly from Client Update Document (Section 1)
+          2. CLEAN OVERVIEW BAR (NO NEGATIVE MARGINS / NO OVERLAPPING)
+             Provider #104556630 & Tagline
          ========================================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-20 relative z-20">
-        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-[#EADBCC] flex flex-col lg:flex-row items-center justify-between gap-6">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-200/90 flex flex-col lg:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-center lg:text-left flex-1">
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
-              <span className="px-3.5 py-1 rounded-full bg-[#E6F7F4] text-[#0B2B26] text-xs font-extrabold uppercase tracking-wider border border-[#4EBAA8]/40 shadow-2xs">
+              <span className="px-3 py-1 rounded-full bg-[#EAF7F4] text-[#0B2B26] text-xs font-bold uppercase tracking-wider border border-[#0B2B26]/20">
                 ODP-Approved Provider #104556630
               </span>
-              <span className="px-3 py-1 rounded-full bg-[#FAF4EE] text-[#0B2B26] text-xs font-semibold border border-[#EADBCC]">
-                Allegheny · Butler · Washington Counties
-              </span>
-              <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-900 text-xs font-bold border border-amber-200/60">
-                Caring Beyond the Call
+              <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">
+                Serving Allegheny, Butler & Washington Counties
               </span>
             </div>
-            <p className="text-sm sm:text-base text-slate-800 font-medium leading-relaxed pt-1">
-              Kenah Wellness Services is an ODP-approved provider (Provider #104556630) and home care agency serving Allegheny, Butler and Washington Counties. We deliver person-centered support for individuals with intellectual disabilities and autism, older adults, adults with physical disabilities, and people recovering at home after a hospital stay.
+            <p className="text-sm sm:text-base text-slate-700 font-normal leading-relaxed">
+              Kenah Wellness Services delivers person-centered support for individuals with intellectual disabilities and autism, older adults, adults with physical disabilities, and people recovering at home after a hospital stay.
             </p>
-            <div className="text-xs sm:text-sm font-bold text-[#E89A24] tracking-wide pt-1">
+            <div className="text-xs sm:text-sm font-bold text-[#0B2B26] tracking-wide pt-0.5">
               ODP Waiver Services &nbsp;|&nbsp; Home Care &nbsp;|&nbsp; Respite &nbsp;|&nbsp; Community Participation &nbsp;|&nbsp; Habilitation
             </div>
           </div>
@@ -317,15 +236,15 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0 w-full sm:w-auto">
             <button
               onClick={onOpenAssessment}
-              className="px-7 py-3.5 rounded-full bg-[#E89A24] hover:bg-[#d68a18] text-white font-bold text-xs sm:text-sm transition-all shadow-md active:scale-95 cursor-pointer text-center"
+              className="px-6 py-2.5 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-bold text-xs sm:text-sm shadow-xs transition-all text-center cursor-pointer"
             >
               Book Free Assessment
             </button>
             <a
               href="tel:+14125461860"
-              className="px-6 py-3 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-semibold text-xs sm:text-sm transition-colors text-center cursor-pointer inline-flex items-center justify-center gap-2"
+              className="px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-[#0B2B26] font-semibold text-xs sm:text-sm transition-colors text-center inline-flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <Phone className="w-3.5 h-3.5 text-[#E89A24]" />
+              <Phone className="w-3.5 h-3.5 text-[#0B2B26]" />
               <span>+1 (412) 546-1860</span>
             </a>
           </div>
@@ -333,917 +252,345 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* =========================================================
-          SPOTLIGHT: WHO WE SUPPORT - ELDERS & PEOPLE WITH ODP
-          Authentic imagery helping families feel at home, with mobile/tablet
-          optimization to prevent scrolling fatigue!
+          3. CATEGORY 1 (FIRST): ODP WAIVER SERVICES HIGHLIGHTS
+             - Kept first
+             - NO counties mentioned
+             - Clickable link: "View All Our ODP Services" pointing to PA HCSIS Directory
+             - Normal readable font sizes
          ========================================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left">
-        <div className="bg-[#FAF4EE] rounded-[32px] sm:rounded-[40px] p-6 sm:p-10 lg:p-12 border border-[#EADBCC] space-y-8">
-          <div className="max-w-3xl space-y-2">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#E89A24] block">
-              COMMITTED TO OUR COMMUNITY
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
-              Compassionate Living for Elders & People with ODP
-            </h2>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-              We design our care around real people. Whether supporting older adults wishing to remain safely in their homes or guiding individuals with intellectual and developmental disabilities through ODP programs, our goal is true independence and peace of mind.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-            
-            {/* Card 1: Our Elders & Seniors */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
-              <div className="space-y-4">
-                {/* On mobile & tablet: clean compact image header that does NOT steal scrolling space */}
-                <div className="relative w-full h-44 sm:h-52 rounded-2xl overflow-hidden bg-slate-100">
-                  <img
-                    src="/home_care_support_1790585595209.jpg"
-                    alt="Elderly client receiving warm, dignified support from a Kenah Wellness caregiver"
-                    className="w-full h-full object-cover object-[center_28%]"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-3 left-3 bg-[#0B2B26]/85 backdrop-blur-sm text-white text-[11px] font-bold px-3 py-1 rounded-full">
-                    Senior Home Care
-                  </div>
-                </div>
-
-                <h3 className="text-xl font-bold text-[#0B2B26] font-display pt-1">
-                  Home Help for Seniors Across Western PA
-                </h3>
-
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Seniors thrive best in familiar surroundings. Our dedicated Direct Care Workers assist with daily routines, hygiene, meal preparation, dementia care, and gentle fall prevention—giving families peace of mind.
-                </p>
-
-                <ul className="space-y-2 text-xs sm:text-sm text-slate-700">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#4EBAA8] shrink-0" />
-                    <span>Personal hygiene, dressing & gentle bathing support</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#4EBAA8] shrink-0" />
-                    <span>Dementia, Alzheimer’s & memory care routines</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#4EBAA8] shrink-0" />
-                    <span>Fall risk mitigation & home safety oversight</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between">
-                <button
-                  onClick={() => onNavigate('home-care')}
-                  className="text-xs sm:text-sm font-bold text-[#0B2B26] hover:text-[#E89A24] flex items-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <span>Explore Senior Care Services</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={onOpenAssessment}
-                  className="px-4 py-2 rounded-full bg-[#E89A24] hover:bg-[#d68a18] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
-                >
-                  Book Free Assessment
-                </button>
-              </div>
-            </div>
-
-            {/* Card 2: Individuals with ODP */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
-              <div className="space-y-4">
-                {/* On mobile & tablet: clean compact image header that does NOT steal scrolling space */}
-                <div className="relative w-full h-44 sm:h-52 rounded-2xl overflow-hidden bg-slate-100">
-                  <img
-                    src="/odp_community_participation_1790585609197.jpg"
-                    alt="Adult participant with intellectual disability engaging in community activity with Direct Support Professional"
-                    className="w-full h-full object-cover object-[center_32%]"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-3 left-3 bg-[#0B2B26]/85 backdrop-blur-sm text-white text-[11px] font-bold px-3 py-1 rounded-full">
-                    ODP Waiver Support
-                  </div>
-                </div>
-
-                <h3 className="text-xl font-bold text-[#0B2B26] font-display pt-1">
-                  Empowering Adults with Intellectual Disabilities
-                </h3>
-
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Through Pennsylvania ODP waivers, we champion active community participation, skill development, and respite care. Our Direct Support Professionals help individuals build real friendships and life autonomy.
-                </p>
-
-                <ul className="space-y-2 text-xs sm:text-sm text-slate-700">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#E89A24] shrink-0" />
-                    <span>In-Home & Out-of-Home Respite for family relief</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#E89A24] shrink-0" />
-                    <span>Community Participation Support (CPS) & volunteer trips</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#E89A24] shrink-0" />
-                    <span>Consolidated, Community Living & P/FDS coordination</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between">
-                <button
-                  onClick={() => onNavigate('odp-waiver')}
-                  className="text-xs sm:text-sm font-bold text-[#0B2B26] hover:text-[#E89A24] flex items-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <span>Explore ODP Waiver Services</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={onOpenAssessment}
-                  className="px-4 py-2 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
-                >
-                  Book Free Assessment
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================
-          2. HOW IT WORKS / OUR THREE-STEP PROCESS
-         ========================================================= */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl bg-[#EAF7F4] border border-[#3CB9A8]/40 p-6 sm:p-8 space-y-6">
           
-          <div className="lg:col-span-5 space-y-6">
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block">
-              HOW IT WORKS
-            </span>
-
-            <h2 className="text-3xl sm:text-5xl font-extrabold text-[#0B2B26] tracking-tight font-display leading-[1.15]">
-              Caring for You, Every Step of the Way
-            </h2>
-
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-md">
-              Our person-centered care model ensures individuals and families receive the exact support they need with dignity and transparency.
-            </p>
-
-            <div className="space-y-4 pt-2">
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-[#FAF4EE] text-[#0B2B26] flex items-center justify-center font-bold text-sm shrink-0 border border-[#EADBCC]">
-                  1
-                </div>
-                <div>
-                  <h4 className="font-bold text-base text-[#0B2B26]">Free In-Home Assessment</h4>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                    We meet with you and your family to assess personal routines, preferences, and ODP waiver authorization.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-[#E6F7F4] text-[#0B2B26] flex items-center justify-center font-bold text-sm shrink-0 border border-[#BDEEE5]">
-                  2
-                </div>
-                <div>
-                  <h4 className="font-bold text-base text-[#0B2B26]">Personalized Care Plan</h4>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                    A tailored plan is created to fit your schedule, health needs, and goals for independent community living.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-[#FDEEF1] text-[#0B2B26] flex items-center justify-center font-bold text-sm shrink-0 border border-[#FAD6DE]">
-                  3
-                </div>
-                <div>
-                  <h4 className="font-bold text-base text-[#0B2B26]">Compassionate Care Delivery</h4>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                    Our certified Direct Support Professionals and caregivers deliver warm, reliable, nurse-supervised care.
-                  </p>
-                </div>
-              </div>
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[#3CB9A8]/30">
+            <div className="space-y-2 max-w-2xl">
+              <span className="px-3 py-1 rounded-full bg-[#0B2B26] text-white text-xs font-bold uppercase tracking-wider inline-block">
+                Category 1: ODP Waiver Services
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B2B26] font-display tracking-tight">
+                Pennsylvania ODP Waiver Services
+              </h2>
+              <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
+                ODP approved provider (Provider #104556630) delivering person-centered habilitation, respite, and community inclusion. We work closely with Supports Coordinators, individuals, and families.
+              </p>
             </div>
 
-            <div className="pt-4">
-              <button
-                onClick={onOpenAssessment}
-                className="px-8 py-3.5 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-medium text-sm transition-all cursor-pointer shadow-md"
+            {/* MANDATORY HCSIS DIRECTORY LINK BUTTON */}
+            <div className="shrink-0 flex flex-wrap gap-2.5">
+              <a
+                href={ODP_HCSIS_DIRECTORY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer"
+                title="View All Our ODP Services on official Pennsylvania HCSIS portal"
               >
-                Schedule Free Assessment
+                <span>View All Our ODP Services</span>
+                <ExternalLink className="w-4 h-4 text-emerald-300" />
+              </a>
+
+              <button
+                onClick={() => onNavigate('services')}
+                className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-white hover:bg-slate-50 text-[#0B2B26] text-xs sm:text-sm font-bold border border-[#0B2B26] transition-all cursor-pointer"
+              >
+                <span>Full ODP Details</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          <div className="hidden lg:flex lg:col-span-7 justify-center lg:justify-end">
-            <HowItWorksIllustration />
+          {/* 4 Brief ODP Highlight Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+            
+            {/* 1. In-Home Respite */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-3">
+              <div className="space-y-2.5">
+                <div className="p-2.5 w-fit rounded-xl bg-[#EAF7F4] text-[#0B2B26]">
+                  <InHomeRespiteLineIcon size={28} className="w-7 h-7" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-[#0B2B26] font-display">
+                  In-Home Respite
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Short-term relief for family caregivers in the individual’s familiar home environment with trained staff.
+                </p>
+              </div>
+              <div className="pt-2 text-xs font-semibold text-[#0B2B26] flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#3CB9A8]" />
+                <span>1:1 to 2:1 Staffing Ratios</span>
+              </div>
+            </div>
+
+            {/* 2. Out-of-Home Respite */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-3">
+              <div className="space-y-2.5">
+                <div className="p-2.5 w-fit rounded-xl bg-[#EAF7F4] text-[#0B2B26]">
+                  <OutOfHomeRespiteLineIcon size={28} className="w-7 h-7" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-[#0B2B26] font-display">
+                  Out-of-Home Respite
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Safe, supervised care in a setting outside the family home while families recharge and routines continue.
+                </p>
+              </div>
+              <div className="pt-2 text-xs font-semibold text-[#0B2B26] flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#3CB9A8]" />
+                <span>Supervised External Care</span>
+              </div>
+            </div>
+
+            {/* 3. Habilitation (HAB) */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-3">
+              <div className="space-y-2.5">
+                <div className="p-2.5 w-fit rounded-xl bg-[#EAF7F4] text-[#0B2B26]">
+                  <HabilitationLineIcon size={28} className="w-7 h-7" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-[#0B2B26] font-display">
+                  Habilitation (HAB)
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Helps individuals learn and maintain everyday skills—such as cooking, household tasks, communication, and safety.
+                </p>
+              </div>
+              <div className="pt-2 text-xs font-semibold text-[#0B2B26] flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#3CB9A8]" />
+                <span>ISP Outcome Coaching</span>
+              </div>
+            </div>
+
+            {/* 4. Community Participation Support (CPS) */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-3">
+              <div className="space-y-2.5">
+                <div className="p-2.5 w-fit rounded-xl bg-[#EAF7F4] text-[#0B2B26]">
+                  <CommunityParticipationLineIcon size={28} className="w-7 h-7" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-[#0B2B26] font-display">
+                  CPS Support
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Building friendships, social skills, and community independence through volunteering, recreation, and clubs.
+                </p>
+              </div>
+              <div className="pt-2 text-xs font-semibold text-[#0B2B26] flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#3CB9A8]" />
+                <span>Civic & Social Inclusion</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm text-slate-700">
+            <span>Ready to coordinate with your Supports Coordinator? We are ready to accept referrals.</span>
+            <button
+              onClick={() => onNavigate('services')}
+              className="font-bold text-[#0B2B26] hover:underline inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>View full ODP descriptions on Services page</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
 
         </div>
       </section>
 
       {/* =========================================================
-          3. YOUR PATH TO WELL-BEING (SERVICES SECTION)
+          4. CATEGORY 2 (SECOND): NON-MEDICAL HOME CARE SERVICES
+             - USER INSTRUCTION: Just list 3 at home section then link to Services page
+             - 1. Personal Care, 2. Companion Care, 3. Homemaker Services
+             - Dominant logo color
          ========================================================= */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
-        
-        <div className="max-w-3xl mx-auto text-center space-y-3 mb-12 sm:mb-16">
-          <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block">
-            YOUR PATH TO WELL-BEING
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl bg-[#FAF4EE] border border-[#EADBCC] p-6 sm:p-8 space-y-6">
+          
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[#EADBCC]">
+            <div className="space-y-2 max-w-2xl">
+              <span className="px-3 py-1 rounded-full bg-[#0B2B26] text-white text-xs font-bold uppercase tracking-wider inline-block">
+                Category 2: Home Care Services
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B2B26] font-display tracking-tight">
+                Non-Medical Home Care Services
+              </h2>
+              <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
+                Compassionate non-medical care helping individuals remain safe and independent at home. Available up to 24 hours a day through Act 150, Medicaid, Insurance, and Private Pay.
+              </p>
+            </div>
+
+            <div className="shrink-0">
+              <button
+                onClick={() => onNavigate('services')}
+                className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer"
+              >
+                <span>View All Home Care Services</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* EXACTLY 3 HOME CARE HIGHLIGHT CARDS (AS REQUESTED) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+            {homeCareHighlightCards.map((card) => (
+              <div
+                key={card.id}
+                className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-3"
+              >
+                <div>
+                  <div className="p-2.5 w-fit rounded-xl bg-[#FAF4EE] text-[#0B2B26] mb-3">
+                    {card.icon}
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-[#0B2B26] font-display">
+                    {card.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mt-1">
+                    {card.desc}
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#0B2B26]">
+                  <span>{card.tagline}</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Clear prompt to see all 12+ home care offerings on dedicated services page */}
+          <div className="pt-2 text-center">
+            <button
+              onClick={() => onNavigate('services')}
+              className="py-2.5 px-6 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer inline-flex items-center gap-1.5"
+            >
+              <span>Explore All Home Care Details on Services Page</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      {/* Note: "Who We Serve" has been relocated to the dedicated About section as requested */}
+
+      {/* =========================================================
+          5. PAYMENT OPTIONS WE ACCEPT
+             Normal readable cards, strong contrast
+         ========================================================= */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="max-w-2xl space-y-1.5">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            Payment & Funding Options
           </span>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-[#0B2B26] tracking-tight font-display">
-            Comprehensive Services Tailored to You
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B2B26] font-display tracking-tight">
+            Payment Options We Accept
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
-            From daily personal care and dementia support to Pennsylvania ODP waiver habilitation and respite, we provide the dedicated care you deserve. Click any service to view its complete full-page guide.
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            We work with Pennsylvania state programs, insurers, and families directly to make care accessible:
           </p>
         </div>
 
-        {/* Category Filter Tabs */}
-        <div className="pt-2 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80">
-          <div>
-            <h3 className="text-xl sm:text-2xl font-bold text-[#0B2B26] font-display">
-              {serviceTab === 'all'
-                ? `All Services & Supports (${homeCareList.length + odpList.length})`
-                : serviceTab === 'home-care'
-                ? `Home Care Services (${homeCareList.length})`
-                : `Pennsylvania ODP Waiver Services (${odpList.length})`}
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-500">
-              Browse services below. Click "Open Full Page" to examine in-depth details, care scope, and coverage.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-full text-xs font-semibold self-start sm:self-auto">
-            <button
-              onClick={() => setServiceTab('all')}
-              className={`px-4 py-2 rounded-full transition-all cursor-pointer ${
-                serviceTab === 'all'
-                  ? 'bg-[#0B2B26] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              All ({homeCareList.length + odpList.length})
-            </button>
-            <button
-              onClick={() => setServiceTab('home-care')}
-              className={`px-4 py-2 rounded-full transition-all cursor-pointer ${
-                serviceTab === 'home-care'
-                  ? 'bg-[#0B2B26] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Home Care ({homeCareList.length})
-            </button>
-            <button
-              onClick={() => setServiceTab('odp-waiver')}
-              className={`px-4 py-2 rounded-full transition-all cursor-pointer ${
-                serviceTab === 'odp-waiver'
-                  ? 'bg-[#0B2B26] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              ODP Waiver ({odpList.length})
-            </button>
-          </div>
-        </div>
-
-        {/* Services Grid (Home Care + ODP Waiver) */}
-        <div className="pt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            ...(serviceTab === 'odp-waiver' ? [] : homeCareList),
-            ...(serviceTab === 'home-care' ? [] : odpList)
-          ].map((service) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          {PAYMENT_OPTIONS.map((opt, i) => (
             <div
-              key={service.id}
-              className="rounded-3xl bg-white border border-slate-200/90 p-6 shadow-xs hover:border-[#0B2B26]/30 transition-all hover:shadow-lg flex flex-col justify-between group"
+              key={i}
+              className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between space-y-3"
             >
               <div>
-                {/* Line-Art Icon with Soft Tinted Circle */}
-                <div className="mb-4">
-                  {renderServiceLineIcon(service.id, 48)}
-                </div>
-
-                <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
-                      service.category === 'odp-waiver'
-                        ? 'bg-[#FAF4EE] text-amber-900 border border-amber-200/60'
-                        : 'bg-[#E6F7F4] text-emerald-900 border border-emerald-200/60'
-                    }`}
-                  >
-                    {service.category === 'odp-waiver' ? 'PA ODP Waiver' : 'Home Care'}
-                  </span>
-                </div>
-
-                <h4 className="text-lg sm:text-xl font-bold text-[#0B2B26] font-display group-hover:text-[#E89A24] transition-colors">
-                  {service.title}
-                </h4>
-
-                <p className="mt-2 text-xs text-slate-600 leading-relaxed line-clamp-3">
-                  {service.shortDesc}
+                <span className="px-2.5 py-0.5 rounded-full bg-[#EAF7F4] text-[#0B2B26] text-[11px] font-bold uppercase tracking-wider">
+                  {opt.badge}
+                </span>
+                <h3 className="mt-2 text-base sm:text-lg font-bold text-[#0B2B26] font-display">
+                  {opt.source}
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  {opt.description}
                 </p>
               </div>
-
-              {/* Action Buttons: Open Full Page & Free Assessment */}
-              <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col gap-2">
-                <button
-                  onClick={() => onSelectService(service)}
-                  className="w-full py-2.5 px-4 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
-                >
-                  <span>Open Full Page</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </button>
-
-                <button
-                  onClick={() => onOpenAssessment()}
-                  className="w-full py-2 px-3 rounded-full bg-[#FAF4EE] hover:bg-[#F8EDE2] text-[#0B2B26] text-xs font-semibold transition-colors flex items-center justify-center gap-1 cursor-pointer"
-                >
-                  <Calendar className="w-3.5 h-3.5 text-[#E89A24]" />
-                  <span>Free Assessment</span>
-                </button>
+              <div className="pt-2 border-t border-slate-100 flex flex-wrap gap-1">
+                {opt.programs.map((p, pI) => (
+                  <span
+                    key={pI}
+                    className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-medium"
+                  >
+                    {p}
+                  </span>
+                ))}
               </div>
             </div>
           ))}
         </div>
-
-        {/* Feature Spotlight Banner */}
-        <div className="mt-12 rounded-[32px] bg-gradient-to-r from-[#FAF4EE] to-[#F8EDE2] border border-[#EADBCC] p-8 sm:p-12 flex flex-col lg:flex-row items-center justify-between gap-8">
-          <div className="space-y-3 text-center lg:text-left">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#E89A24]">
-              Community Mentorship & Support Coordination
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-bold text-[#0B2B26] font-display">
-              Need Help Choosing the Right Service or Navigating ODP?
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 max-w-xl leading-relaxed">
-              Our registered nurse and care coordinators guide you through state waiver eligibility, individualized support planning (ISP), and customized home care solutions.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
-            <button
-              onClick={onOpenAssessment}
-              className="px-7 py-3 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-bold text-xs sm:text-sm transition-all shadow-md active:scale-95 cursor-pointer"
-            >
-              Book Free Assessment
-            </button>
-            <button
-              onClick={() => onNavigate('contact')}
-              className="px-6 py-3 rounded-full bg-white hover:bg-slate-50 text-[#0B2B26] border border-slate-300 font-semibold text-xs sm:text-sm transition-colors cursor-pointer"
-            >
-              Ask a Coordinator
-            </button>
-          </div>
-        </div>
-
-        {/* =========================================================
-            WHO WE SERVE (Client Update Document - Section 5)
-           ========================================================= */}
-        <div className="mt-16 pt-8 border-t border-slate-200/80">
-          <div className="max-w-3xl mb-10 text-left">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#E89A24] block mb-2">
-              PERSON-CENTERED POPULATIONS
-            </span>
-            <h3 className="text-2xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
-              Who We Serve
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-              We deliver compassionate, tailored care for individuals and families across Allegheny, Butler, and Washington Counties:
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {WHO_WE_SERVE.map((item, index) => (
-              <div
-                key={index}
-                className="rounded-3xl bg-white border border-slate-200/90 p-6 shadow-xs hover:border-[#0B2B26]/30 transition-all hover:shadow-md flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <div className="w-10 h-10 rounded-2xl bg-[#FAF4EE] text-[#0B2B26] flex items-center justify-center font-bold text-sm">
-                    {index + 1}
-                  </div>
-                  <h4 className="text-base sm:text-lg font-bold text-[#0B2B26] font-display">
-                    {item.title}
-                  </h4>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center gap-1.5 text-xs font-semibold text-[#0B2B26]">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#4EBAA8]" />
-                  <span>Person-Centered Care Plan</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* =========================================================
-            PAYMENT OPTIONS WE ACCEPT (Client Update Document - Section 6)
-           ========================================================= */}
-        <div className="mt-20 pt-8 border-t border-slate-200/80">
-          <div className="max-w-3xl mb-10 text-left">
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block mb-2">
-              FINANCIAL & PROGRAM FUNDING
-            </span>
-            <h3 className="text-2xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
-              Payment Options We Accept
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-              Kenah Wellness works with families, state agencies, and healthcare insurers to ensure access to essential support:
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {PAYMENT_OPTIONS.map((opt, i) => (
-              <div
-                key={i}
-                className="rounded-3xl bg-white border border-slate-200/90 p-6 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#E6F7F4] text-emerald-900 text-[10px] font-bold uppercase tracking-wider border border-emerald-200/60">
-                      {opt.badge}
-                    </span>
-                    <CreditCard className="w-4 h-4 text-slate-400" />
-                  </div>
-                  <h4 className="text-lg font-bold text-[#0B2B26] font-display">
-                    {opt.source}
-                  </h4>
-                  <p className="mt-2 text-xs text-slate-600 leading-relaxed">
-                    {opt.description}
-                  </p>
-                </div>
-                <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap gap-1.5">
-                  {opt.programs.map((prog, pIdx) => (
-                    <span
-                      key={pIdx}
-                      className="px-2 py-0.5 rounded-md bg-slate-50 text-slate-600 text-[10px] font-medium"
-                    >
-                      {prog}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* =========================================================
-            WHY CHOOSE KENAH WELLNESS SERVICES? (Section 8 Corrections)
-           ========================================================= */}
-        <div className="mt-20 pt-8 border-t border-slate-200/80">
-          <div className="max-w-3xl mb-10 text-left">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#E89A24] block mb-2">
-              DEDICATED QUALITY CARE
-            </span>
-            <h3 className="text-2xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
-              Why Choose Kenah Wellness Services?
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-              We stand apart through clinical excellence, continuous training, and person-centered dedication:
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {WHY_CHOOSE_US.map((item, idx) => (
-              <div
-                key={idx}
-                className="rounded-3xl bg-[#FAF4EE] border border-[#EADBCC] p-6 shadow-2xs hover:bg-white transition-colors"
-              >
-                <div className="w-8 h-8 rounded-xl bg-white text-[#0B2B26] flex items-center justify-center font-bold text-xs mb-3 shadow-2xs border border-slate-200/60">
-                  <Award className="w-4 h-4 text-[#E89A24]" />
-                </div>
-                <h4 className="text-base font-bold text-[#0B2B26] font-display mb-1.5">
-                  {item.title}
-                </h4>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
       </section>
 
       {/* =========================================================
-          4. TESTIMONIALS & SOCIAL PROOF COMPONENT (Real Feedback from kenahwellness.com)
+          6. TESTIMONIALS SECTION
          ========================================================= */}
       <Testimonials onOpenAssessment={onOpenAssessment} />
 
       {/* =========================================================
-          5. PARTNERS LOGO BAR
+          7. CONTACT & GET STARTED SECTION
+             Dominant brand green card, strictly company phone & email
          ========================================================= */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="rounded-full bg-slate-50 border border-slate-200/80 px-8 py-5 flex flex-wrap items-center justify-between gap-6 text-slate-600">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-            Our Partners
-          </span>
-
-          <div className="flex flex-wrap items-center justify-between gap-8 sm:gap-12 flex-1 font-semibold text-sm tracking-tight text-slate-700">
-            <span className="font-display font-extrabold tracking-tight text-slate-800">Pennsylvania ODP</span>
-            <span className="font-display font-bold">Consolidated Waiver</span>
-            <span className="font-display font-bold">Allegheny MH/ID</span>
-            <span className="font-display font-bold">PA DHS Certified</span>
-            <span className="font-display font-extrabold tracking-wider">MEDICAID</span>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================
-          6. BLOG & CARE RESOURCES SECTION (NEW BLOG INTEGRATION)
-         ========================================================= */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E6F7F4] text-[#0B2B26] text-xs font-bold uppercase tracking-wider mb-2">
-              <BookOpen className="w-3.5 h-3.5 text-[#4EBAA8]" />
-              <span>Family Care Blog & Insights</span>
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-extrabold text-[#0B2B26] tracking-tight font-display">
-              Latest Articles & Resources
-            </h2>
-            <p className="text-sm sm:text-base text-slate-600 max-w-xl mt-2">
-              Expert advice on navigating Pennsylvania ODP waivers, memory care routines, and family caregiver burnout prevention.
-            </p>
-          </div>
-
-          <button
-            onClick={() => onNavigate('blog')}
-            className="px-6 py-2.5 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer self-start sm:self-auto whitespace-nowrap"
-          >
-            Explore All Blog Posts →
-          </button>
-        </div>
-
-        {/* 3 Featured Blog Cards - Dynamically loaded and opens full article page */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-          {blogsList.slice(0, 3).map((post) => (
-            <article
-              key={post.id}
-              onClick={() => onSelectBlog(post)}
-              className="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-lg transition-all flex flex-col group cursor-pointer"
-            >
-              <div className="relative h-48 overflow-hidden bg-slate-100">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/Hero.jpg';
-                  }}
-                />
-                <div className="absolute top-3 left-3">
-                  <span className="px-2.5 py-1 rounded-full bg-[#0B2B26]/85 backdrop-blur-sm text-white text-[11px] font-semibold">
-                    {post.category}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-3 text-[11px] text-slate-400 mb-2">
-                    <span>{post.date}</span>
-                    <span>•</span>
-                    <span>{post.readTime}</span>
-                  </div>
-
-                  <h3 className="text-base sm:text-lg font-bold text-[#0B2B26] group-hover:text-[#E89A24] transition-colors leading-snug mb-2 font-display">
-                    {post.title}
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-slate-600 line-clamp-3 leading-relaxed">
-                    {post.excerpt}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">
-                    By {post.author.name}
-                  </span>
-                  <span className="text-xs font-bold text-[#0B2B26] group-hover:text-[#E89A24] transition-colors">
-                    Read Full Article →
-                  </span>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* =========================================================
-          7. FREE ASSESSMENT CONSULTATION CALLOUT
-         ========================================================= */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
-        <div className="rounded-[36px] bg-[#FAF4EE] border border-amber-200/80 p-8 sm:p-14 relative overflow-hidden shadow-xs">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl bg-[#0B2B26] text-white p-7 sm:p-10 shadow-lg">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-8 space-y-4">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-amber-800">
-                  <Calendar className="w-4 h-4" />
-                </div>
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-800">
-                  Schedule Free Assessment
-                </span>
-              </div>
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight leading-[1.2]">
-                Book a Free In-Home Assessment with Our Care Planning Team
+            
+            <div className="lg:col-span-7 space-y-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                Get in Touch With Our Team
+              </span>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display leading-tight">
+                We’re Here to Support Your Family
               </h2>
-              <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
-                Whether you need senior companion care, specialized dementia support, or respite relief under the Pennsylvania Consolidated Waiver, our care coordinators are ready to meet in person, over video, or by phone.
+              <p className="text-xs sm:text-sm text-slate-200 font-normal leading-relaxed">
+                Speak directly with our care coordinators to verify waiver eligibility, arrange respite, or schedule a free assessment.
               </p>
-              <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-700 pt-1">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  No referral necessary
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-amber-500" />
-                  Flexible in-home or virtual options
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-teal-500" />
-                  Certified PA ODP provider
-                </span>
+
+              <div className="pt-2 space-y-2 text-xs sm:text-sm text-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <Phone className="w-4 h-4 text-emerald-400" />
+                  <span>
+                    <strong>Phone:</strong>{' '}
+                    <a href={`tel:${COMPANY_DETAILS.phoneClean}`} className="text-emerald-300 font-bold hover:underline">
+                      {COMPANY_DETAILS.phone}
+                    </a>
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <span className="text-emerald-400 font-bold">@</span>
+                  <span>
+                    <strong>Email:</strong>{' '}
+                    <a href={`mailto:${COMPANY_DETAILS.email}`} className="text-emerald-300 font-bold hover:underline">
+                      {COMPANY_DETAILS.email}
+                    </a>
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <Home className="w-4 h-4 text-emerald-400" />
+                  <span>
+                    <strong>Office:</strong> {COMPANY_DETAILS.address.street}, {COMPANY_DETAILS.address.city}, {COMPANY_DETAILS.address.state} {COMPANY_DETAILS.address.zip}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-center">
+            <div className="lg:col-span-5 flex flex-col gap-3">
               <button
                 onClick={onOpenAssessment}
-                className="w-full py-4 px-8 rounded-full bg-[#E89A24] hover:bg-[#d68a18] active:scale-95 text-white font-bold text-sm sm:text-base transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 px-6 rounded-full bg-white hover:bg-slate-100 active:scale-95 text-[#0B2B26] font-bold text-sm shadow-md transition-all cursor-pointer text-center"
               >
-                <Calendar className="w-5 h-5" />
-                <span>Book Free Assessment</span>
+                Book Free Assessment
               </button>
-              <a
-                href="tel:+14125461860"
-                className="w-full py-3.5 px-8 rounded-full bg-white hover:bg-slate-50 text-[#0B2B26] border border-slate-300 font-semibold text-xs sm:text-sm transition-colors text-center cursor-pointer inline-flex items-center justify-center gap-2"
+
+              <button
+                onClick={() => onNavigate('contact')}
+                className="w-full py-3 px-6 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/20 transition-all cursor-pointer text-center"
               >
-                <Phone className="w-4 h-4 text-[#0B2B26]" />
-                <span>Call +1 (412) 546-1860</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+                Send Us a Message
+              </button>
 
-      {/* =========================================================
-          8. FREQUENTLY ASKED QUESTIONS
-         ========================================================= */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
-          <div className="lg:col-span-5 space-y-6">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block mb-2">
-                NEED HELP?
-              </span>
-
-              <h2 className="text-3xl sm:text-5xl font-extrabold text-[#0B2B26] tracking-tight font-display leading-[1.15]">
-                Frequently Asked Questions
-              </h2>
-
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mt-3">
-                Find clear answers to common questions about our Home Care and Pennsylvania ODP Waiver services.
+              <p className="text-[11px] text-slate-300 text-center pt-0.5">
+                We typically respond within 12 hours. Rapid caregiver placement available.
               </p>
             </div>
 
-            <div className="hidden lg:block">
-              <FaqFlowerHeadIllustration />
-            </div>
           </div>
-
-          <div className="lg:col-span-7 space-y-3">
-            {FAQS.slice(0, 6).map((faq, index) => {
-              const isOpen = openFaqIndex === index;
-              return (
-                <div
-                  key={faq.id}
-                  className="border-b border-slate-200 py-4 sm:py-5 transition-colors text-left"
-                >
-                  <button
-                    onClick={() => toggleFaq(index)}
-                    className="w-full flex items-center justify-between gap-4 text-left cursor-pointer group"
-                  >
-                    <span className="font-semibold text-sm sm:text-base text-slate-900 group-hover:text-[#0B2B26] transition-colors">
-                      {faq.question}
-                    </span>
-                    <span className="w-6 h-6 flex items-center justify-center text-slate-800 shrink-0">
-                      {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                    </span>
-                  </button>
-
-                  {isOpen && (
-                    <div className="pt-3 text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line pr-6">
-                      {faq.answer}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-        </div>
-      </section>
-
-      {/* =========================================================
-          9. GET IN TOUCH / WE’RE HERE TO SUPPORT YOU
-         ========================================================= */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
-        
-        <div className="max-w-2xl mx-auto text-center space-y-3 mb-14">
-          <span className="text-xs font-bold uppercase tracking-widest text-slate-500 block">
-            GET IN TOUCH
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-[#0B2B26] tracking-tight font-display">
-            We’re Here to Support You
-          </h2>
-          <p className="text-sm sm:text-base text-slate-600">
-            Whether you have questions, need help getting started with an assessment, or want to learn more — reach out anytime.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          
-          <div className="lg:col-span-5 space-y-6">
-            <h3 className="text-xl font-bold text-[#0B2B26] font-display">
-              Contact Details:
-            </h3>
-
-            <div className="space-y-3.5 text-sm text-slate-700">
-              <div>
-                <strong className="text-slate-900">Email:</strong>{' '}
-                <a href="mailto:info@kenahwellness.com" className="hover:underline">
-                  info@kenahwellness.com
-                </a>
-              </div>
-              <div>
-                <strong className="text-slate-900">Phone:</strong>{' '}
-                <a href="tel:+14125461860" className="hover:underline">
-                  +1 (412) 546-1860
-                </a>
-              </div>
-              <div>
-                <strong className="text-slate-900">Address:</strong>{' '}
-                <span>2400 Ansys Drive, Suite 169, Canonsburg, PA 15317</span>
-              </div>
-              <div className="p-3.5 rounded-2xl bg-[#FAF4EE] border border-[#EADBCC] text-xs">
-                <strong className="text-[#0B2B26] block font-bold mb-0.5">
-                  Direct Referrals Contact:
-                </strong>
-                <span className="text-slate-700">
-                  Zephaniah Omweno, Operations Manager
-                </span>
-                <span className="block text-[11px] text-slate-500 mt-0.5">
-                  Direct SC coordination across Allegheny, Butler & Washington Counties
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 pt-2 text-slate-700">
-              <a
-                href="https://www.linkedin.com/company/kenah-wellness-services-llc/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#0B2B26] transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a
-                href="https://www.facebook.com/profile.php?id=61581451048202"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#0B2B26] transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href="https://www.instagram.com/kenah_wellness/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#0B2B26] transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href="tel:+14125461860"
-                className="hover:text-[#0B2B26] transition-colors"
-                aria-label="Phone"
-              >
-                <Phone className="w-5 h-5" />
-              </a>
-            </div>
-
-            <div className="pt-6 text-xs text-slate-400">
-              We typically respond within 12 hours.
-            </div>
-          </div>
-
-          <div className="lg:col-span-7">
-            <div className="rounded-[32px] bg-[#F8EDE2] p-8 sm:p-12">
-              <h3 className="text-xl font-bold text-[#0B2B26] font-display mb-6">
-                Send Us a Message
-              </h3>
-
-              {contactSubmitted ? (
-                <div className="py-8 text-center space-y-3">
-                  <div className="text-emerald-700 font-bold text-base">
-                    Message Sent Successfully!
-                  </div>
-                  <p className="text-xs text-slate-600">
-                    Thank you for reaching out. Our care coordinator will contact you shortly.
-                  </p>
-                  <button
-                    onClick={() => setContactSubmitted(false)}
-                    className="text-xs font-semibold text-[#0B2B26] underline pt-2 cursor-pointer"
-                  >
-                    Send another message
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleContactSubmit} className="space-y-6">
-                  {/* Honeypot anti-spam field (hidden from genuine users) */}
-                  <div className="hidden" aria-hidden="true">
-                    <label htmlFor="hp_check_home">Leave this empty</label>
-                    <input
-                      type="text"
-                      id="hp_check_home"
-                      name="hp_check_home"
-                      tabIndex={-1}
-                      autoComplete="off"
-                      value={contactHoneypot}
-                      onChange={(e) => setContactHoneypot(e.target.value)}
-                    />
-                  </div>
-
-                  {contactError && (
-                    <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium">
-                      {contactError}
-                    </div>
-                  )}
-
-                  <div>
-                    <label htmlFor="hp_contact_email" className="block text-xs font-medium text-slate-600 mb-1">
-                      Email Address *
-                    </label>
-                    <input
-                      id="hp_contact_email"
-                      type="email"
-                      required
-                      value={contactEmail}
-                      onChange={(e) => setContactEmail(e.target.value)}
-                      placeholder="Your email address"
-                      className="w-full bg-transparent border-b border-slate-400/70 pb-2 text-sm text-[#0B2B26] placeholder:text-slate-400 focus:outline-hidden focus:border-[#0B2B26]"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="hp_contact_msg" className="block text-xs font-medium text-slate-600 mb-1">
-                      Message *
-                    </label>
-                    <textarea
-                      id="hp_contact_msg"
-                      rows={3}
-                      required
-                      value={contactMessage}
-                      onChange={(e) => setContactMessage(e.target.value)}
-                      placeholder="How can we assist you or your family?"
-                      className="w-full bg-transparent border-b border-slate-400/70 pb-2 text-sm text-[#0B2B26] placeholder:text-slate-400 focus:outline-hidden focus:border-[#0B2B26] resize-none"
-                    />
-                  </div>
-
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      className="w-full py-3.5 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-medium text-sm transition-all cursor-pointer shadow-xs"
-                    >
-                      Send Message
-                    </button>
-                    <p className="text-[11px] text-slate-500 mt-3 text-center leading-snug">
-                      Your privacy is protected. Submitted information is strictly used to answer your inquiry in accordance with our{' '}
-                      <button
-                        type="button"
-                        onClick={() => onNavigate('privacy')}
-                        className="text-[#0B2B26] font-semibold underline cursor-pointer"
-                      >
-                        Privacy Policy
-                      </button>.
-                    </p>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-
         </div>
       </section>
 

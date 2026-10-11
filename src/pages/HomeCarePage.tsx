@@ -103,7 +103,7 @@ export const HomeCarePage: React.FC<HomeCarePageProps> = ({
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-[#0B2B26] font-display tracking-tight text-balance leading-[1.12]">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B2B26] font-display tracking-tight text-balance leading-tight">
               Home Help for Seniors Across Western PA
             </h1>
 
@@ -114,17 +114,17 @@ export const HomeCarePage: React.FC<HomeCarePageProps> = ({
             <div className="pt-4 flex flex-wrap items-center gap-3.5">
               <button
                 onClick={onOpenAssessment}
-                className="px-8 py-3.5 rounded-full bg-[#E89A24] hover:bg-[#d68a18] text-white font-bold text-sm sm:text-base transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-2"
+                className="px-8 py-3 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-bold text-sm sm:text-base transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-2"
               >
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-4 h-4 text-emerald-400" />
                 <span>Book Free Assessment</span>
               </button>
 
               <a
                 href={`tel:${COMPANY_DETAILS.phoneClean}`}
-                className="px-6 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#0B2B26] border border-[#D8D2C9] font-medium text-sm sm:text-base transition-all cursor-pointer inline-flex items-center gap-2"
+                className="px-6 py-3 rounded-full bg-white hover:bg-slate-50 text-[#0B2B26] border border-[#D8D2C9] font-medium text-sm sm:text-base transition-all cursor-pointer inline-flex items-center gap-2"
               >
-                <Phone className="w-4 h-4 text-[#E89A24]" />
+                <Phone className="w-4 h-4 text-[#0B2B26]" />
                 <span>{COMPANY_DETAILS.phone}</span>
               </a>
             </div>

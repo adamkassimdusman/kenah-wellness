@@ -124,7 +124,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({
                 <div className="pt-2 flex flex-wrap items-center gap-2">
                   <button
                     onClick={handleAcceptAll}
-                    className="px-4 py-2 rounded-full bg-[#E89A24] hover:bg-[#d68a18] active:scale-95 text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                    className="px-4 py-2 rounded-full bg-white hover:bg-slate-100 active:scale-95 text-[#0B2B26] text-xs font-bold transition-all cursor-pointer shadow-xs"
                   >
                     Accept All
                   </button>
@@ -269,7 +269,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({
                 <button
                   type="button"
                   onClick={handleAcceptAll}
-                  className="px-5 py-2 rounded-full bg-[#E89A24] hover:bg-[#d68a18] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  className="px-5 py-2 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
                 >
                   Accept All
                 </button>

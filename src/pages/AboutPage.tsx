@@ -42,12 +42,12 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, onOpenAssessme
               <span className="px-3 py-1 rounded-full bg-white text-[#0B2B26] text-xs font-semibold border border-slate-200">
                 Serving Allegheny, Butler & Washington Counties
               </span>
-              <span className="px-3 py-1 rounded-full bg-[#E89A24] text-white text-xs font-bold">
-                Caring Beyond the Call
+              <span className="px-3 py-1 rounded-full bg-[#EAF7F4] text-[#0B2B26] text-xs font-bold border border-[#0B2B26]/20">
+                Licensed Home Care Agency
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-[#0B2B26] font-display tracking-tight text-balance leading-[1.12]">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B2B26] font-display tracking-tight text-balance leading-tight">
               Caring for You with Compassion, Dignity & Purpose
             </h1>
 
@@ -55,7 +55,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, onOpenAssessme
               Kenah Wellness Services is an ODP-approved provider (Provider #104556630) and home care agency serving Allegheny, Butler and Washington Counties. We deliver person-centered support for individuals with intellectual disabilities and autism, older adults, adults with physical disabilities, and people recovering at home after a hospital stay.
             </p>
 
-            <div className="text-xs sm:text-sm font-bold text-[#E89A24] tracking-wide pt-2">
+            <div className="text-xs sm:text-sm font-bold text-[#0B2B26] tracking-wide pt-2">
               ODP Waiver Services &nbsp;|&nbsp; Home Care &nbsp;|&nbsp; Respite &nbsp;|&nbsp; Community Participation &nbsp;|&nbsp; Habilitation
             </div>
           </div>
@@ -168,28 +168,28 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, onOpenAssessme
         </div>
       </section>
 
-      {/* WHO WE SERVE (Section 5) */}
+      {/* WHO WE SERVE (Prominently featured in About Section) */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 space-y-8">
-        <div>
-          <span className="text-xs font-bold uppercase tracking-widest text-[#E89A24] block mb-1">
-            PEOPLE & POPULATIONS
+        <div className="space-y-2">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#0B2B26] block">
+            Populations & Individuals We Support
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B2B26] font-display tracking-tight">
             Who We Serve
           </h2>
-          <p className="mt-2 text-sm text-slate-600 max-w-2xl">
-            Our person-centered services are tailored to individuals across every stage of need in Allegheny, Butler, and Washington Counties.
+          <p className="text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed">
+            Our person-centered services are tailored to individuals across every stage of need in Allegheny, Butler, and Washington Counties, honoring independence, dignity, and individual choice.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {WHO_WE_SERVE.map((item, index) => (
             <div
               key={index}
-              className="p-6 rounded-[28px] bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between"
+              className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-[#0B2B26] transition-all flex flex-col justify-between space-y-3"
             >
-              <div className="space-y-3">
-                <span className="w-8 h-8 rounded-full bg-[#FAF4EE] text-[#0B2B26] flex items-center justify-center font-bold text-xs">
+              <div className="space-y-2.5">
+                <span className="w-8 h-8 rounded-xl bg-[#EAF7F4] text-[#0B2B26] flex items-center justify-center font-bold text-xs">
                   0{index + 1}
                 </span>
                 <h3 className="font-bold text-[#0B2B26] text-base font-display">
@@ -198,6 +198,10 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, onOpenAssessme
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   {item.description}
                 </p>
+              </div>
+              <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 text-xs font-semibold text-[#0B2B26]">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Tailored Individual Care Plan</span>
               </div>
             </div>
           ))}
@@ -299,9 +303,12 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, onOpenAssessme
             <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
               We work closely with Supports Coordinators, families, and individuals across Allegheny, Butler, and Washington counties. Connect directly with our intake team:
             </p>
-            <div className="pt-2 text-xs sm:text-sm text-slate-100 flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="pt-2 text-sm sm:text-base text-slate-100 flex flex-col sm:flex-row sm:items-center gap-4">
               <div>
-                <strong>Referrals Contact:</strong> {COMPANY_DETAILS.referralsContact.name}, {COMPANY_DETAILS.referralsContact.role}
+                <strong>Referrals:</strong> {COMPANY_DETAILS.referralsContact.department}
+              </div>
+              <div>
+                <strong>Phone:</strong> <a href={`tel:${COMPANY_DETAILS.phoneClean}`} className="hover:underline">{COMPANY_DETAILS.phone}</a>
               </div>
               <div>
                 <strong>Email:</strong> <a href={`mailto:${COMPANY_DETAILS.email}`} className="hover:underline">{COMPANY_DETAILS.email}</a>
@@ -312,7 +319,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, onOpenAssessme
           <div className="flex flex-wrap gap-3 shrink-0">
             <button
               onClick={onOpenAssessment}
-              className="px-7 py-3 rounded-full bg-[#E89A24] hover:bg-[#d68a18] text-white font-bold text-xs sm:text-sm transition-all shadow-md cursor-pointer"
+              className="px-7 py-3 rounded-full bg-white hover:bg-slate-100 text-[#0B2B26] font-bold text-xs sm:text-sm transition-all shadow-md cursor-pointer"
             >
               Book Free Assessment
             </button>
@@ -320,7 +327,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, onOpenAssessme
               href={`tel:${COMPANY_DETAILS.phoneClean}`}
               className="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm transition-all border border-white/20 cursor-pointer flex items-center gap-1.5"
             >
-              <Phone className="w-3.5 h-3.5 text-[#F2D701]" />
+              <Phone className="w-3.5 h-3.5 text-emerald-400" />
               <span>{COMPANY_DETAILS.phone}</span>
             </a>
           </div>

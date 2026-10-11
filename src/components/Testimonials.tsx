@@ -305,9 +305,9 @@ export const Testimonials: React.FC<TestimonialsProps> = ({
                 {onOpenAssessment && (
                   <button
                     onClick={onOpenAssessment}
-                    className="px-5 py-2.5 rounded-full bg-[#E89A24] hover:bg-[#d68a18] text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1.5"
+                    className="px-5 py-2.5 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1.5"
                   >
-                    <Calendar className="w-3.5 h-3.5" />
+                    <Calendar className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Book Free Assessment</span>
                   </button>
                 )}

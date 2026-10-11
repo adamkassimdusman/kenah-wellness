@@ -11,7 +11,8 @@ import {
   Sparkles,
   CreditCard,
   Award,
-  Users
+  Users,
+  ExternalLink
 } from 'lucide-react';
 import {
   InHomeCommunitySupportsLineIcon,
@@ -25,7 +26,8 @@ import { getStoredOdpServices, DATA_CHANGE_EVENT } from '../utils/storage';
 import {
   COMPANY_DETAILS,
   PAYMENT_OPTIONS,
-  WHY_CHOOSE_US
+  WHY_CHOOSE_US,
+  ODP_HCSIS_DIRECTORY_URL
 } from '../data/servicesData';
 
 interface OdpWaiverPageProps {
@@ -76,13 +78,13 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
       {/* Hero Header with Provider #104556630 and Counties */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="rounded-[36px] sm:rounded-[44px] bg-[#F8EDE2] p-8 sm:p-14 border border-[#EADBCC] relative overflow-hidden">
-          <div className="max-w-3xl space-y-4">
+          <div className="max-w-4xl space-y-4">
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-3.5 py-1 rounded-full bg-[#0B2B26] text-white text-xs font-bold uppercase tracking-wider">
                 ODP Provider #104556630
               </span>
               <span className="px-3 py-1 rounded-full bg-white text-[#0B2B26] text-xs font-semibold border border-slate-200">
-                Allegheny · Butler · Washington Counties
+                Pennsylvania ODP Waiver Provider
               </span>
               <span className="px-3 py-1 rounded-full bg-[#E89A24] text-white text-xs font-bold">
                 Ready to Accept Referrals
@@ -93,31 +95,37 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
               Pennsylvania ODP Waiver Services
             </h1>
 
-            <p className="text-sm sm:text-base text-slate-700 leading-relaxed max-w-2xl pt-1">
-              Kenah Wellness Services is an Office of Developmental Programs (ODP) approved provider (Provider #104556630). We work closely with Supports Coordinators, individuals and families to deliver person-centered In-Home & Community Supports (IHCS), Respite Services, Community Participation Support (CPS), and life-enriching Habilitation.
+            <p className="text-base sm:text-lg text-slate-700 leading-relaxed max-w-3xl pt-1">
+              Kenah Wellness Services is an Office of Developmental Programs (ODP) approved provider (Provider #104556630). We work closely with Supports Coordinators, individuals and families to deliver person-centered In-Home Respite, Out-of-Home Respite, Habilitation (HAB), and Community Participation Support (CPS).
             </p>
 
-            <div className="text-xs sm:text-sm font-bold text-[#E89A24] tracking-wide pt-1">
+            <div className="text-sm sm:text-base font-bold text-[#E89A24] tracking-wide pt-1">
               Consolidated Waiver &nbsp;|&nbsp; Community Living Waiver &nbsp;|&nbsp; P/FDS Waiver
             </div>
 
             <div className="pt-4 flex flex-wrap items-center gap-3.5">
+              <a
+                href={ODP_HCSIS_DIRECTORY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-7 py-3.5 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-bold text-sm sm:text-base transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-2"
+                title="View All Our ODP Services on official Pennsylvania HCSIS portal"
+              >
+                <span>View All Our ODP Services</span>
+                <ExternalLink className="w-4 h-4 text-[#F2D701]" />
+              </a>
+
               <button
                 onClick={onOpenAssessment}
-                className="px-8 py-3.5 rounded-full bg-[#E89A24] hover:bg-[#d68a18] text-white font-bold text-sm transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-2"
+                className="px-7 py-3 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-bold text-sm sm:text-base transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-2"
               >
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-4 h-4 text-emerald-400" />
                 <span>Book Free Assessment</span>
               </button>
-              <button
-                onClick={onOpenAssessment}
-                className="px-7 py-3.5 rounded-full bg-[#0B2B26] hover:bg-[#071E1A] text-white font-bold text-sm transition-all shadow-md active:scale-95 cursor-pointer"
-              >
-                Verify Waiver Eligibility
-              </button>
+
               <a
                 href={`tel:${COMPANY_DETAILS.phoneClean}`}
-                className="px-6 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#0B2B26] border border-[#D8D2C9] font-medium text-sm transition-all cursor-pointer inline-flex items-center gap-2"
+                className="px-6 py-3.5 rounded-full bg-white hover:bg-slate-50 text-[#0B2B26] border border-[#D8D2C9] font-medium text-sm sm:text-base transition-all cursor-pointer inline-flex items-center gap-2"
               >
                 <Phone className="w-4 h-4 text-[#E89A24]" />
                 <span>{COMPANY_DETAILS.phone}</span>
@@ -368,20 +376,20 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
         </div>
       </section>
 
-      {/* Referrals Coordinator Box with Zephaniah Omweno */}
+      {/* Referrals Coordination Box */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="rounded-[32px] bg-[#0B2B26] text-white p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-lg">
-          <div className="max-w-xl space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#F2D701]">
+          <div className="max-w-xl space-y-3">
+            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#F2D701]">
               SUPPORTS COORDINATORS & FAMILIES
             </span>
-            <h3 className="text-2xl sm:text-3xl font-bold font-display">
+            <h3 className="text-2xl sm:text-4xl font-bold font-display">
               Ready to Accept ODP Referrals
             </h3>
-            <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
-              Contact Zephaniah Omweno, Operations Manager, for rapid intake, staffing confirmations, and ISP alignment across Allegheny, Butler, and Washington Counties.
+            <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
+              Contact our Care Coordination & Intake Team for rapid intake, staffing confirmations, and ISP alignment under Pennsylvania ODP waivers.
             </p>
-            <div className="pt-2 text-xs sm:text-sm text-slate-100 space-y-1">
+            <div className="pt-2 text-sm sm:text-base text-slate-100 space-y-1.5">
               <div><strong>Direct Phone:</strong> +1 (412) 546-1860</div>
               <div><strong>Email:</strong> info@kenahwellness.com</div>
               <div><strong>Office:</strong> 2400 Ansys Drive, Suite 169, Canonsburg, PA 15317</div>
@@ -406,7 +414,7 @@ export const OdpWaiverPage: React.FC<OdpWaiverPageProps> = ({
             </button>
             <button
               onClick={onOpenAssessment}
-              className="px-7 py-3 rounded-full bg-[#E89A24] hover:bg-[#d68a18] text-white font-bold text-xs sm:text-sm cursor-pointer shadow-md transition-all active:scale-95"
+              className="px-7 py-3 rounded-full bg-white hover:bg-slate-100 text-[#0B2B26] font-bold text-xs sm:text-sm cursor-pointer shadow-md transition-all active:scale-95"
             >
               Book Free Assessment
             </button>

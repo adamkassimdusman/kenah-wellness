@@ -53,6 +53,12 @@ export const Footer: React.FC<FooterProps> = ({
                   Home
                 </button>
                 <button
+                  onClick={() => handleNav('services')}
+                  className="hover:text-[#0B2B26] transition-colors text-left cursor-pointer font-bold text-[#0B2B26]"
+                >
+                  Services Directory
+                </button>
+                <button
                   onClick={() => handleNav('about')}
                   className="hover:text-[#0B2B26] transition-colors text-left cursor-pointer"
                 >
@@ -257,9 +263,9 @@ export const Footer: React.FC<FooterProps> = ({
               <div className="relative z-10 pt-8 flex flex-wrap items-center gap-3">
                 <button
                   onClick={onOpenAssessment}
-                  className="w-full sm:w-auto px-7 py-3 rounded-full bg-[#E89A24] hover:bg-[#d68a18] active:scale-95 text-white font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full sm:w-auto px-7 py-3 rounded-full bg-white hover:bg-slate-100 active:scale-95 text-[#0B2B26] font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="w-4 h-4 text-emerald-600" />
                   <span>Book Free Assessment</span>
                 </button>
 
@@ -267,7 +273,7 @@ export const Footer: React.FC<FooterProps> = ({
                   href="tel:+14125461860"
                   className="w-full sm:w-auto px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm transition-all border border-white/20 flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  <Phone className="w-3.5 h-3.5 text-[#F2D701]" />
+                  <Phone className="w-3.5 h-3.5 text-emerald-300" />
                   <span>+1 (412) 546-1860</span>
                 </a>
               </div>
